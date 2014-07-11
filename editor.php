@@ -51,7 +51,9 @@ if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
 	//include_once($librenms_base."/includes/definitions.inc.php");
 	//include_once($librenms_base."/includes/functions.php");
 	//include_once($librenms_base."html/includes/functions.inc.php");
+	chdir('../../');
 	include_once($librenms_base."html/includes/authenticate.inc.php");
+	chdir('plugins/Weathermap');
 	//$config['base_url'] = $cacti_url;
 	$librenms_found = TRUE;
 }

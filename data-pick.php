@@ -15,6 +15,9 @@ if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
 	// include the librenms-config, so we know about the database
 	include_once($librenms_base."/config.php");
 	include_once($librenms_base."/includes/defaults.inc.php");
+	chdir('../../');
+	include_once($librenms_base."html/includes/authenticate.inc.php");
+	chdir('plugins/Weathermap');
 	// $config['base_url'] = $librenms_url;
 	$config['base_url'] = (isset($config['url_path'])? $config['url_path'] : $librenms_url);
 	$librenms_found = TRUE;
