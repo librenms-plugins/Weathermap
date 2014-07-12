@@ -12,27 +12,25 @@ $whats_installed = '';
 // check if the goalposts have moved
 if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
 {
-	// include the librenms-config, so we know about the database
-	include_once($librenms_base."/config.php");
-	include_once($librenms_base."/includes/defaults.inc.php");
-	chdir('../../');
-	include_once($librenms_base."html/includes/authenticate.inc.php");
-	chdir('plugins/Weathermap');
-	// $config['base_url'] = $librenms_url;
-	$config['base_url'] = (isset($config['url_path'])? $config['url_path'] : $librenms_url);
-	$librenms_found = TRUE;
-	// print "global";
-	if($config['project_name'] == 'LibreNMS') {
-		$whats_installed = 'LibreNMS';
-	} else {
-		$whats_installed = 'Observium';
-	}
+  // include the LibreNMS config, so we know about the database
+  chdir('../../');
+  include_once("../config.php");
+  include_once("../includes/defaults.inc.php");
+  include_once("../includes/definitions.inc.php");
+  include_once("../includes/functions.php");
+  include_once("includes/functions.inc.php");
+  require_once("includes/authenticate.inc.php");
+  if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated']))
+  {
+    header('Location: /');
+  }
+  chdir('plugins/Weathermap');
+  $librenms_found = TRUE;
 }
 else
 {
-	$librenms_found = FALSE;
+        $librenms_found = FALSE;
 }
-
 $link = mysql_connect($config['db_host'],$config['db_user'],$config['db_pass'])
                 or die('Could not connect: ' . mysql_error());
 		mysql_selectdb($config['db_name'],$link) or die('Could not select database: '.mysql_error());

@@ -19,7 +19,6 @@ $librenms_base = '../../../';
 $librenms_url = '/';
 $ignore_librenms=FALSE;
 $configerror = '';
-$whats_installed = 'LibreNMS';
 
 $config_loaded = @include_once 'editor-config.php';
 
@@ -64,16 +63,6 @@ else
 {
 	$librenms_found = FALSE;
 }
-
-//if ($_SESSION['userlevel'] < '5')
-//{
-//  include("$librenms_base/html/includes/error-no-perm.inc.php");
-//} else {
-
-//if($librenms_found && isset($plugins))
-//{
-//	# here, we know we're part of a plugin - do auth stuff
-//}
 
 if(! is_writable($mapdir))
 {
@@ -1073,7 +1062,7 @@ else
 		  <tr>
 			<th>'Hover' Graph URL</th>
 			<td><input id="node_hover" name="node_hover" type="text" />
-			<span class="cactinode"><a id="node_librenmspick">[Pick from <?php echo $whats_installed?>]</a></span></td>
+			<span class="cactinode"><a id="node_librenmspick">[Pick from LibreNMS]</a></span></td>
 		  </tr>
 		  <tr>
 			<th>Icon Filename</th>
@@ -1155,7 +1144,7 @@ else
 			<tr>
 			  <th>Data Source</th>
 			  <td><input id="link_target" name="link_target" type="text" /> <span class="librenmslink"><a id="link_librenmspick">[Pick
-			  from <?php echo $whats_installed?>]</a></span></td>
+			  from LibreNMS]</a></span></td>
 			</tr>
 			<tr>
 			  <th>Link Width</th>
