@@ -105,7 +105,7 @@ function wm_editor_sanitize_conffile($filename) {
 
 function show_editor_startpage()
 {
-	global $mapdir, $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror;
+	global $mapdir, $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror, $action;
 
 	$fromplug = false;
 	if (isset($_REQUEST['plug']) && (intval($_REQUEST['plug'])==1) ) { 
@@ -149,6 +149,9 @@ function show_editor_startpage()
 	
 	print 'Do you want to:<p>';
 	print 'Create A New Map:<br>';
+    if($action == 'newmap') {
+      print "<b>Error creating map, the filename needs to end in .conf</b>";
+    }
 	print '<form method="GET">';
 	print 'Named: <input type="text" name="mapname" size="20">';
 
