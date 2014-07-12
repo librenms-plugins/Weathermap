@@ -57,7 +57,7 @@ if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
   {
     header('Location: /');
   }
-  chdir('html/plugins/Weathermap');
+  chdir('plugins/Weathermap');
   $librenms_found = TRUE;
 }
 else

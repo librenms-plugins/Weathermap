@@ -1,6 +1,6 @@
 <?php
 
-if(! is_writable('configs'))
+if(! is_writable('plugins/Weathermap/configs'))
 {
   print_error("The map config directory is not writable by the web server user. You will not be able to edit any files until this is corrected.");
 }
