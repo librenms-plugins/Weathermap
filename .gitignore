@@ -1,2 +1,4 @@
 configs
-output
+output/*
+!output/index.php
+
