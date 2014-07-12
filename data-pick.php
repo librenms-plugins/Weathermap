@@ -10,7 +10,7 @@ $config['base_url'] = $librenms_url;
 $whats_installed = '';
 
 // check if the goalposts have moved
-if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
+if( file_exists("../../../config.php") )
 {
   // include the LibreNMS config, so we know about the database
   chdir('../../');
