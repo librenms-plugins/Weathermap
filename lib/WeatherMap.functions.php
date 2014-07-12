@@ -1439,7 +1439,7 @@ function calc_offset($offsetstring, $width, $height)
 // These next two are based on perl's Number::Format module
 // by William R. Ward, chopped down to just what I needed
 
-function format_number($number, $precision = 2, $trailing_zeroes = 0)
+function format_number_new($number, $precision = 2, $trailing_zeroes = 0)
 {
 	$sign=1;
 
@@ -1518,7 +1518,7 @@ function nice_bandwidth($number, $kilo = 1000,$decimals=1,$below_one=TRUE)
 		$suffix="n";
 	}
 
-	$result=format_number($number, $decimals) . $suffix;
+	$result=format_number_new($number, $decimals) . $suffix;
 	return ($result);
 }
 
@@ -1576,7 +1576,7 @@ function nice_scalar($number, $kilo = 1000, $decimals=1)
 		$suffix="m";
 	}
 
-	$result = $prefix . format_number($number, $decimals) . $suffix;
+	$result = $prefix . format_number_new($number, $decimals) . $suffix;
 	return ($result);
 }
 

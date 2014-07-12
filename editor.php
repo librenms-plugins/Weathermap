@@ -4,7 +4,7 @@ require_once 'lib/editor.inc.php';
 require_once 'lib/Weathermap.class.php';
 
 // so that you can't have the editor active, and not know about it.
-$ENABLED=false;
+$ENABLED=true;
 
 if(! $ENABLED)
 {
@@ -45,17 +45,20 @@ if( isset($config) )
 // check if the goalposts have moved
 if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
 {
-	// include the cacti-config, so we know about the database
-	include_once($librenms_base."/config.php");
-	include_once($librenms_base."/includes/defaults.inc.php");
-	//include_once($librenms_base."/includes/definitions.inc.php");
-	//include_once($librenms_base."/includes/functions.php");
-	//include_once($librenms_base."html/includes/functions.inc.php");
-	chdir('../../');
-	include_once($librenms_base."html/includes/authenticate.inc.php");
-	chdir('plugins/Weathermap');
-	//$config['base_url'] = $cacti_url;
-	$librenms_found = TRUE;
+  // include the cacti-config, so we know about the database
+  chdir('../../');
+  include_once("../config.php");
+  include_once("../includes/defaults.inc.php");
+  include_once("../includes/definitions.inc.php");
+  include_once("../includes/functions.php");
+  include_once("includes/functions.inc.php");
+  require_once("includes/authenticate.inc.php");
+  if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated']))
+  {
+    header('Location: /');
+  }
+  chdir('html/plugins/Weathermap');
+  $librenms_found = TRUE;
 }
 else
 {
