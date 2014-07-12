@@ -20,7 +20,7 @@ This program is free software: you can redistribute it and/or modify
 **/
 
 // Set variables for map-poller.php
-
+$basehref='/plugins/Weathermap/';
 // Change to directory that map-poller was run from.
 // Thank you to Supun Rathnayake (https://twitter.com/supunr) for the bug report
 // and fix for includes being set incorrectly and changing map-poller to chdir from
@@ -63,7 +63,7 @@ if(is_dir($conf_dir)) {
 	if($dh = opendir($conf_dir)) {
 		while (($file = readdir($dh)) !== false) {
 			if( "." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file){
-				$cmd = "php ./weathermap.php --config $conf_dir/$file --base-href ./";
+				$cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
 				$fp = popen($cmd, 'r'); 
 				$read = fread($fp, 1024);
 				echo $read;
