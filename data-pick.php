@@ -3,7 +3,7 @@
 // ******************************************
 // sensible defaults
 $mapdir='configs';
-$librenms_base = '../../';
+$librenms_base = '../../../';
 $librenms_url = '/';
 $ignore_librenms=FALSE;
 $config['base_url'] = $librenms_url;
