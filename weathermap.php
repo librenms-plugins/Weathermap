@@ -22,6 +22,8 @@ $dumpstats=0;
 $randomdata=0;
 $dumpconfig='';
 $defines=array();
+$daemon=0;
+$daemon_args="";
 
 // **************************************************************************************
 // THIS IS THE ONE LINE IN HERE YOU MIGHT HAVE TO CHANGE!
@@ -50,7 +52,8 @@ $long_opts=array
 		"dumpafter",
 		"bulge",
 		"sizedebug",
-		"dumpconfig="
+		"dumpconfig=",
+                "daemon="
 	);
 
 $args=$cg->readPHPArgv();
@@ -136,6 +139,12 @@ if (sizeof($gopts) > 0)
 		case '--output':
 			$imagefile=$o[1];
 			break;
+
+                 case '--daemon':
+                         $daemon=1;
+                         $daemon_args=$o[1];
+                         #$rrdtool = $rrdtool . " --daemon ".$o[1];
+                         break;
 			
         case '--define':
             preg_match("/^([^=]+)=(.*)\s*$/",$o[1],$matches);
@@ -183,6 +192,7 @@ if (sizeof($gopts) > 0)
                         
                         print " --help                   -  show this help\n";
                         print " --version                -  show version number\n\n";
+                        print " --daemon {path}          -  path to rrdcached sock\n\n";
                         print "More info at http://www.network-weathermap.com/\n";
 			exit();
 			break;
@@ -202,6 +212,8 @@ if(isset($options_output['debugging']) && $options_output['debugging'])
 $map=new Weathermap;
 $map->rrdtool = $rrdtool;
 $map->context="cli";
+$map->daemon=$daemon;
+$map->daemon_args=$daemon_args;
 
 // now stuff in all the others, that we got from getopts
 foreach ($options_output as $key=>$value)

@@ -63,7 +63,11 @@ if(is_dir($conf_dir)) {
 	if($dh = opendir($conf_dir)) {
 		while (($file = readdir($dh)) !== false) {
 			if( "." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file){
-				$cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
+                                if ($config['rrdcached']) {
+                                    $cmd = "php ./weathermap --config $conf_dir/$file --base-href $weathermap_url --daemon ".$config['rrdcached'];
+                                } else {
+                                    $cmd = "php ./weathermap --config $conf_dir/$file --base-href $weathermap_url";
+                                }
 				$fp = popen($cmd, 'r'); 
 				$read = fread($fp, 1024);
 				echo $read;
