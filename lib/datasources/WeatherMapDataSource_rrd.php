@@ -225,6 +225,10 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 		$args[] = "--end";
 		$args[] = $end;
 		
+                if ($map->daemon) {
+                    $args[] = "--daemon";
+                    $args[] = $map->daemon_args;
+                }
 		# assemble an appropriate RRDtool command line, skipping any '-' DS names.
 		# $command = $map->rrdtool . " graph /dev/null -f ''  --start $start --end $end ";
 		
@@ -344,6 +348,10 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 		$args[] = "--end";
 		$args[] = $end;
 		
+                if($map->daemon) {
+                    $args[] = "--daemon";
+                    $args[] = $map->daemon_args;
+                }
 		$command = $map->rrdtool;
 		foreach ($args as $arg)
 		{

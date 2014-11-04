@@ -201,6 +201,8 @@ class WeatherMap extends WeatherMapBase
 	var $imagefile,
 		$imageuri;
 	var $rrdtool;
+        var $daemon;
+        var $daemon_args;
 	var $title,
 		$titlefont;
 	var $kilo;
