@@ -341,6 +341,11 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 		#### $command = '"'.$map->rrdtool . '" fetch "'.$rrdfile.'" AVERAGE --start '.$start.' --end '.$end;
 		#$command=$map->rrdtool . " fetch $rrdfile $cf --start $start --end $end $extra_options";
 		$args[] = "fetch";
+
+                if($map->daemon) {
+                    $args[] = "--daemon";
+                    $args[] = $map->daemon_args;
+                }
 		$args[] = $rrdfile;
 		$args[] = $cf;
 		$args[] = "--start";
@@ -348,10 +353,6 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 		$args[] = "--end";
 		$args[] = $end;
 		
-                if($map->daemon) {
-                    $args[] = "--daemon";
-                    $args[] = $map->daemon_args;
-                }
 		$command = $map->rrdtool;
 		foreach ($args as $arg)
 		{
