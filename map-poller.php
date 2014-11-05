@@ -50,7 +50,7 @@ if (isset($options['d']))
 
 
 include("../../includes/defaults.inc.php");
-include("../../config.php");
+include("../../../config.php");
 include("../../includes/definitions.inc.php");
 include("../../includes/functions.php");
 include("../../includes/polling/functions.inc.php");
@@ -64,9 +64,9 @@ if(is_dir($conf_dir)) {
 		while (($file = readdir($dh)) !== false) {
 			if( "." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file){
                                 if ($config['rrdcached']) {
-                                    $cmd = "php ./weathermap --config $conf_dir/$file --base-href $weathermap_url --daemon ".$config['rrdcached'];
+                                    $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref$ --daemon ".$config['rrdcached'];
                                 } else {
-                                    $cmd = "php ./weathermap --config $conf_dir/$file --base-href $weathermap_url";
+                                    $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
                                 }
 				$fp = popen($cmd, 'r'); 
 				$read = fread($fp, 1024);
