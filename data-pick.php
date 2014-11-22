@@ -14,8 +14,8 @@ if( file_exists("../../../config.php") )
 {
   // include the LibreNMS config, so we know about the database
   chdir('../../');
-  include_once("../config.php");
   include_once("../includes/defaults.inc.php");
+  include_once("../config.php");
   include_once("../includes/definitions.inc.php");
   include_once("../includes/functions.php");
   include_once("includes/functions.inc.php");
