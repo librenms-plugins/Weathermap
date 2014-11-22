@@ -46,8 +46,8 @@ if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
 {
   // include the cacti-config, so we know about the database
   chdir('../../');
-  include_once("../config.php");
   include_once("../includes/defaults.inc.php");
+  include_once("../config.php");
   include_once("../includes/definitions.inc.php");
   include_once("../includes/functions.php");
   include_once("includes/functions.inc.php");
