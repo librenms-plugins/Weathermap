@@ -49,11 +49,11 @@ if (isset($options['d']))
 }
 
 
-include("../../includes/defaults.inc.php");
+include("../../../includes/defaults.inc.php");
 include("../../../config.php");
-include("../../includes/definitions.inc.php");
-include("../../includes/functions.php");
-include("../../includes/polling/functions.inc.php");
+include("../../../includes/definitions.inc.php");
+include("../../../includes/functions.php");
+include("../../../includes/polling/functions.inc.php");
 
 $cli = TRUE;
 
