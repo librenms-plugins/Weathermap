@@ -69,8 +69,10 @@ if(is_dir($conf_dir)) {
                                     $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
                                 }
 				$fp = popen($cmd, 'r'); 
-				$read = fread($fp, 1024);
-				echo $read;
+				while(!feof($fp)) { 
+					$read = fgets($fp);
+					echo $read;
+				}
 				pclose($fp);
 			}
 		}
