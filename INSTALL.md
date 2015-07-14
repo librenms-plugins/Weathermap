@@ -1,4 +1,4 @@
-1. Extract to your LibreNMS plugins directory html/plugins so you should see something like /opt/observium/html/plugins/Weathermap/
+1. Extract to your LibreNMS plugins directory html/plugins so you should see something like /opt/librenms/html/plugins/Weathermap/
   The best way to do this is via git. Go to your install directory and then html/plugins.
   Enter:
     git clone https://github.com/librenms-plugins/Weathermap.git
