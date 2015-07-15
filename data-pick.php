@@ -181,7 +181,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 		var newlocation;
 		var fullpath;
 
-		var rra_path = <?php echo js_escape('rrd/'); ?>+name+'/port-';
+		var rra_path = <?php echo js_escape('./'); ?>+name+'/port-';
 
 		if (typeof window.opener == "object") {
 			fullpath = rra_path+ifIndex+'.rrd:INOCTETS:OUTOCTETS';
