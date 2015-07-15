@@ -203,6 +203,7 @@ class WeatherMap extends WeatherMapBase
 	var $rrdtool;
         var $daemon;
         var $daemon_args;
+        var $chdir;
 	var $title,
 		$titlefont;
 	var $kilo;

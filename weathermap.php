@@ -53,7 +53,8 @@ $long_opts=array
 		"bulge",
 		"sizedebug",
 		"dumpconfig=",
-                "daemon="
+                "daemon=",
+				"chdir="
 	);
 
 $args=$cg->readPHPArgv();
@@ -145,6 +146,10 @@ if (sizeof($gopts) > 0)
                          $daemon_args=$o[1];
                          #$rrdtool = $rrdtool . " --daemon ".$o[1];
                          break;
+
+                 case '--chdir':
+					 	 $chdir = $o[1];
+                         break;
 			
         case '--define':
             preg_match("/^([^=]+)=(.*)\s*$/",$o[1],$matches);
@@ -193,6 +198,7 @@ if (sizeof($gopts) > 0)
                         print " --help                   -  show this help\n";
                         print " --version                -  show version number\n\n";
                         print " --daemon {path}          -  path to rrdcached sock\n\n";
+						print " --chdir {path}           -  path to change to before running rrdtool\n\n";
                         print "More info at http://www.network-weathermap.com/\n";
 			exit();
 			break;
@@ -214,6 +220,10 @@ $map->rrdtool = $rrdtool;
 $map->context="cli";
 $map->daemon=$daemon;
 $map->daemon_args=$daemon_args;
+
+if(isset($chdir)) {
+	$map->chdir=$chdir;
+}
 
 // now stuff in all the others, that we got from getopts
 foreach ($options_output as $key=>$value)

@@ -267,6 +267,10 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 			}
 		}
 		$command .= " " . $extra_options;
+
+		if ($map->chdir) {
+			$command = "cd " . $map->chdir . "; " . $command
+		}
 		
 		wm_debug("RRD ReadData: Running: $command\n");
 		$pipe=popen($command, "r");
@@ -367,6 +371,9 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 		}
 		$command .= " " . $extra_options;
 		
+		if ($map->chdir) {
+			$command = "cd " . $map->chdir . "; " . $command
+		}
 		
 		wm_debug ("RRD ReadData: Running: $command\n");
 		$pipe=popen($command, "r");
