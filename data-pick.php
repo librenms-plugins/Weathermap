@@ -311,7 +311,7 @@ if(sizeof($hosts) > 0) {
 	{
 			while ($queryrows = mysql_fetch_assoc($result)) {
 			echo "<li class=\"row".($i%2)."\">";
-			$key = $queryrows['device_id']."','".$queryrows['hostname']."','".$queryrows['port_id']."','".$queryrows['ifAlias']."','".addslashes($queryrows['ifDescr'])."','".$queryrows['ifIndex'];
+			$key = $queryrows['device_id']."','".$queryrows['hostname']."','".$queryrows['port_id']."','".addslashes($queryrows['ifAlias'])."','".addslashes($queryrows['ifDescr'])."','".$queryrows['ifIndex'];
 			echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">". $queryrows['hostname'] . "/" . $queryrows['ifDescr'] . " Desc:" . $queryrows['ifAlias'] . ":</a>";
 			echo "</li>\n";
 			
