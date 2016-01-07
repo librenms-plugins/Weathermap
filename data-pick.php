@@ -295,7 +295,7 @@ if(sizeof($hosts) > 0) {
 
 	print '</form><div class="listcontainer"><ul id="dslist">';
 
-	$query = "SELECT devices.device_id,hostname,ports.port_id,ports.ifAlias,ports.ifIndex,ports.ifDescr FROM devices LEFT JOIN ports ON devices.device_id=ports.device_id WHERE ports.disabled=0";
+	$query = "SELECT devices.device_id,hostname,ports.port_id,ports.ifAlias,ports.ifIndex,ports.ifDescr,ports.deleted FROM devices LEFT JOIN ports ON devices.device_id=ports.device_id WHERE ports.disabled=0";
 
 	if($host_id > 0) {
 		$query .= " AND devices.device_id='$host_id'";
@@ -312,7 +312,9 @@ if(sizeof($hosts) > 0) {
 			while ($queryrows = mysql_fetch_assoc($result)) {
 			echo "<li class=\"row".($i%2)."\">";
 			$key = $queryrows['device_id']."','".$queryrows['hostname']."','".$queryrows['port_id']."','".addslashes($queryrows['ifAlias'])."','".addslashes($queryrows['ifDescr'])."','".$queryrows['ifIndex'];
-			echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">". $queryrows['hostname'] . "/" . $queryrows['ifDescr'] . " Desc:" . $queryrows['ifAlias'] . ":</a>";
+			// Indicated if port is marked deleted
+			$deleted = $queryrows['deleted'] ? " (D)" : "";
+			echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">". $queryrows['hostname'] . "/" . $queryrows['ifDescr'] . " Desc:" . $queryrows['ifAlias'] . "$deleted</a>";
 			echo "</li>\n";
 			
 			$i++;
