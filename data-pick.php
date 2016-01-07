@@ -3,37 +3,62 @@
 // ******************************************
 // sensible defaults
 $mapdir='configs';
-$librenms_base = '../../../';
-$librenms_url = '/';
 $ignore_librenms=FALSE;
-$config['base_url'] = $librenms_url;
+$config['base_url'] = '/';
 $whats_installed = '';
 
+$config_file_path = Null;
+$librenms_base = '../../../';
+
+// Valid config.php paths
+$config_file_paths = array (
+	'/etc/librenms/config.php',
+	'/opt/librenms/config.php',
+	'../../../config.php',
+);
+
+// Try to find most appropriate librenms config file
+foreach ($config_file_paths as $path) {
+	if (file_exists ($path)) {
+		$config_file_path = $path;
+		break;
+	}
+}
+
 // check if the goalposts have moved
-if( file_exists("../../../config.php") )
-{
-  // include the LibreNMS config, so we know about the database
-  chdir('../../');
-  include_once("../includes/defaults.inc.php");
-  include_once("../config.php");
-  include_once("../includes/definitions.inc.php");
-  include_once("../includes/functions.php");
-  include_once("includes/functions.inc.php");
-  require_once("includes/authenticate.inc.php");
-  if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated']))
-  {
-    header('Location: /');
-  }
-  chdir('plugins/Weathermap');
-  $librenms_found = TRUE;
+if (file_exists ($config_file_path)) {
+	/*
+	 * Include the LibreNMS config, so we know about the database.
+	 *
+	 * Include config first to get install dir, then load defaults and config
+	 * again to get full set of config values.
+	 */
+	require ($config_file_path);
+	$librenms_base = $config['install_dir'];
+	include_once ("$librenms_base/includes/defaults.inc.php");
+	require ($config_file_path);
+
+	// FIXME: Why is this neccessary?!
+	chdir ("$librenms_base/html");
+
+	include_once("$librenms_base/includes/definitions.inc.php");
+	include_once("$librenms_base/includes/functions.php");
+	include_once("$librenms_base/html/includes/functions.inc.php");
+	require_once("$librenms_base/html/includes/authenticate.inc.php");
+	if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated'])) {
+		header('Location: /');
+	}
+
+	chdir('plugins/Weathermap');
+	$librenms_found = TRUE;
 }
-else
-{
-        $librenms_found = FALSE;
+else {
+	$librenms_found = FALSE;
 }
+
 $link = mysql_connect($config['db_host'],$config['db_user'],$config['db_pass'])
                 or die('Could not connect: ' . mysql_error());
-		mysql_selectdb($config['db_name'],$link) or die('Could not select database: '.mysql_error());
+mysql_selectdb($config['db_name'],$link) or die('Could not select database: '.mysql_error());
 
 
 // ******************************************
@@ -301,7 +326,7 @@ if(sizeof($hosts) > 0) {
 		$query .= " AND devices.device_id='$host_id'";
 	}
 	
-	$query .= " ORDER BY hostname,ports.ifAlias";
+	$query .= " ORDER BY hostname,ports.ifName";
 	$result = mysql_query($query);
 
 	// print $SQL_picklist;
