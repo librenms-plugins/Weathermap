@@ -17,6 +17,13 @@ $config_file_paths = array (
 	'../../../config.php',
 );
 
+$valid_sort_if_by = array (
+	'ifAlias',
+	'ifDescr',
+	'ifIndex',
+	'ifName',
+);
+
 // Try to find most appropriate librenms config file
 foreach ($config_file_paths as $path) {
 	if (file_exists ($path)) {
@@ -326,7 +333,12 @@ if(sizeof($hosts) > 0) {
 		$query .= " AND devices.device_id='$host_id'";
 	}
 	
-	$query .= " ORDER BY hostname,ports.ifAlias";
+	$sort_if_by = $config['plugins']['Weathermap']['sort_if_by'];
+	if (in_array ($sort_if_by, $valid_sort_if_by)) {
+		$query .= " ORDER BY hostname,ports.$sort_if_by";
+	} else {
+		$query .= " ORDER BY hostname,ports.ifAlias";
+	}
 	$result = mysql_query($query);
 
 	// print $SQL_picklist;
