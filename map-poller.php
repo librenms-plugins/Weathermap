@@ -28,7 +28,10 @@ $basehref='/plugins/Weathermap/';
 
 chdir(dirname($argv[0]));
 
-if (php_sapi_name() == 'cli') { 
+if (php_sapi_name() != 'cli') {
+	echo "ERROR: map-poller.php should ONLY be run as a CGI script!\n";
+	exit;
+}
 
 $options = getopt("d");
 
@@ -76,8 +79,5 @@ if(is_dir($conf_dir)) {
 			}
 		}
 	}
-}
-} else {
-exit;
 }
 ?>
