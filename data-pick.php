@@ -206,10 +206,10 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 		var newlocation;
 		var fullpath;
 
-		var rra_path = <?php echo js_escape('./'); ?>+name+'/port-';
+		var rra_path = <?php echo js_escape('./'); ?>+name+'/port-id';
 
 		if (typeof window.opener == "object") {
-			fullpath = rra_path+ifIndex+'.rrd:INOCTETS:OUTOCTETS';
+			fullpath = rra_path+portid+'.rrd:INOCTETS:OUTOCTETS';
 			if(document.forms['mini'].aggregate.checked)
 			{
 				opener.document.forms["frmMain"].link_target.value = opener.document.forms["frmMain"].link_target.value  + " " + fullpath;
