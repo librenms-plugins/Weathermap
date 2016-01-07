@@ -37,18 +37,18 @@ $options = getopt("d");
 
 if (isset($options['d']))
 {
-  echo("DEBUG!\n");
-  $debug = TRUE;
-  ini_set('display_errors', 1);
-  ini_set('display_startup_errors', 1);
-  ini_set('log_errors', 1);
-#  ini_set('error_reporting', E_ALL ^ E_NOTICE);
+	echo("DEBUG!\n");
+	$debug = TRUE;
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	ini_set('log_errors', 1);
+# 	ini_set('error_reporting', E_ALL ^ E_NOTICE);
 } else {
-  $debug = FALSE;
-#  ini_set('display_errors', 0);
-  ini_set('display_startup_errors', 0);
-  ini_set('log_errors', 0);
-#  ini_set('error_reporting', 0);
+	$debug = FALSE;
+#	ini_set('display_errors', 0);
+	ini_set('display_startup_errors', 0);
+	ini_set('log_errors', 0);
+	ini_set('error_reporting', 0);
 }
 
 
@@ -62,16 +62,16 @@ $cli = TRUE;
 
 $conf_dir = 'configs/';
 
-if(is_dir($conf_dir)) {
-	if($dh = opendir($conf_dir)) {
+if (is_dir($conf_dir)) {
+	if ($dh = opendir($conf_dir)) {
 		while (($file = readdir($dh)) !== false) {
-			if( "." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file){
+			if ("." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file) {
 			    	$cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref --chdir ".$config['rrd_dir'];
                                 if ($config['rrdcached']) {
                                     $cmd = $cmd." --daemon ".$config['rrdcached'];
                                 } 
 				$fp = popen($cmd, 'r'); 
-				while(!feof($fp)) { 
+				while (!feof($fp)) {
 					$read = fgets($fp);
 					echo $read;
 				}
