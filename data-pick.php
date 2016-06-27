@@ -17,6 +17,10 @@ $config_file_paths = array (
 	'../../../config.php',
 );
 
+$weathermap_config = array (
+	'sort_if_by' => 'ifAlias',
+);
+
 $valid_sort_if_by = array (
 	'ifAlias',
 	'ifDescr',
@@ -43,6 +47,8 @@ if (file_exists ($config_file_path)) {
 	require ($config_file_path);
 	$librenms_base = $config['install_dir'];
 	include_once ("$librenms_base/includes/defaults.inc.php");
+	/* Load Weathermap config defaults, see file for description. */
+	include_once ("defaults.inc.php");
 	require ($config_file_path);
 
 	// FIXME: Why is this neccessary?!
@@ -58,6 +64,10 @@ if (file_exists ($config_file_path)) {
 
 	chdir('plugins/Weathermap');
 	$librenms_found = TRUE;
+
+	/* Validate configuration */
+	if (in_array ($config['plugins']['Weathermap']['sort_if_by'], $valid_sort_if_by))
+		$weathermap_config['sort_if_by'] = $config['plugins']['Weathermap']['sort_if_by'];
 }
 else {
 	$librenms_found = FALSE;
@@ -325,8 +335,12 @@ if(sizeof($hosts) > 0) {
 
 	print '</form><div class="listcontainer"><ul id="dslist">';
 
+	/*
+	 * Query interfaces...
+	 */
 	$query = "SELECT devices.device_id,hostname,ports.port_id,ports.ifAlias,ports.ifIndex,ports.ifDescr,ports.deleted FROM devices LEFT JOIN ports ON devices.device_id=ports.device_id WHERE ports.disabled=0";
 
+	/* ...of specific host/device? */
 	if($host_id > 0) {
 		$query .= " AND devices.device_id='$host_id'";
 	}
@@ -337,6 +351,9 @@ if(sizeof($hosts) > 0) {
 	} else {
 		$query .= " ORDER BY hostname,ports.ifAlias";
 	}
+
+	/* ...in specific order? */
+	$query .= " ORDER BY hostname,ports." . $weathermap_config['sort_if_by'];
 	$result = mysqli_query($link,$query);
 
 	// print $SQL_picklist;
