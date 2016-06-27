@@ -18,6 +18,7 @@ $config_file_paths = array (
 );
 
 $weathermap_config = array (
+	'show_interfaces' => 'all',
 	'sort_if_by' => 'ifAlias',
 );
 
@@ -26,6 +27,15 @@ $valid_sort_if_by = array (
 	'ifDescr',
 	'ifIndex',
 	'ifName',
+);
+
+$valid_show_interfaces = array (
+	'all' => -1,
+	'any' => -1,
+	'-1'  => -1,
+	#
+	'none' => 0,
+	'0'    => 0,
 );
 
 // Try to find most appropriate librenms config file
@@ -65,9 +75,14 @@ if (file_exists ($config_file_path)) {
 	chdir('plugins/Weathermap');
 	$librenms_found = TRUE;
 
-	/* Validate configuration */
+	/* Validate configuration, see defaults.inc.php for explaination */
 	if (in_array ($config['plugins']['Weathermap']['sort_if_by'], $valid_sort_if_by))
 		$weathermap_config['sort_if_by'] = $config['plugins']['Weathermap']['sort_if_by'];
+
+	if (in_array ($config['plugins']['Weathermap']['show_interfaces'], $valid_show_interfaces))
+		$weathermap_config['show_interfaces'] = $valid_show_interfaces[$config['plugins']['Weathermap']['show_interfaces']];
+	elseif (validate_device_id ($config['plugins']['Weathermap']['show_interfaces']))
+		$weathermap_config['show_interfaces'] = $config['plugins']['Weathermap']['show_interfaces'];
 }
 else {
 	$librenms_found = FALSE;
@@ -286,7 +301,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 
 	//$SQL_picklist = "select data_local.host_id, data_template_data.local_data_id, data_template_data.name_cache, data_template_data.active, data_template_data.data_source_path from data_local,data_template_data,data_input,data_template where data_local.id=data_template_data.local_data_id and data_input.id=data_template_data.data_input_id and data_local.data_template_id=data_template.id ";
 
-	$host_id = -1;
+	$host_id = $weathermap_config['show_interfaces'];
 	
 	$overlib = true;
 	$aggregate = false;
@@ -336,27 +351,21 @@ if(sizeof($hosts) > 0) {
 	print '</form><div class="listcontainer"><ul id="dslist">';
 
 	/*
-	 * Query interfaces...
+	 * Query interfaces (if we should)...
 	 */
-	$query = "SELECT devices.device_id,hostname,ports.port_id,ports.ifAlias,ports.ifIndex,ports.ifDescr,ports.deleted FROM devices LEFT JOIN ports ON devices.device_id=ports.device_id WHERE ports.disabled=0";
+	$result = Null;
+	if ($host_id != 0) {
+		$query = "SELECT devices.device_id,hostname,ports.port_id,ports.ifAlias,ports.ifIndex,ports.ifDescr,ports.deleted FROM devices LEFT JOIN ports ON devices.device_id=ports.device_id WHERE ports.disabled=0";
 
-	/* ...of specific host/device? */
-	if($host_id > 0) {
-		$query .= " AND devices.device_id='$host_id'";
+		/* ...of specific host/device? */
+		if($host_id > 0) {
+			$query .= " AND devices.device_id='$host_id'";
+		}
+
+		/* ...in specific order? */
+		$query .= " ORDER BY hostname,ports." . $weathermap_config['sort_if_by'];
+		$result = mysqli_query($link,$query);
 	}
-	
-	$sort_if_by = $config['plugins']['Weathermap']['sort_if_by'];
-	if (in_array ($sort_if_by, $valid_sort_if_by)) {
-		$query .= " ORDER BY hostname,ports.$sort_if_by";
-	} else {
-		$query .= " ORDER BY hostname,ports.ifAlias";
-	}
-
-	/* ...in specific order? */
-	$query .= " ORDER BY hostname,ports." . $weathermap_config['sort_if_by'];
-	$result = mysqli_query($link,$query);
-
-	// print $SQL_picklist;
 
 	$i=0;
 	if( mysqli_num_rows($result) > 0 )
