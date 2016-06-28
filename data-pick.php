@@ -309,11 +309,21 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 	if(isset($_REQUEST['aggregate'])) $aggregate = ( $_REQUEST['aggregate']==0 ? false : true);
 	if(isset($_REQUEST['overlib'])) $overlib= ( $_REQUEST['overlib']==0 ? false : true);
 	
-	
-	if(isset($_REQUEST['host_id']))
+	/* Explicit device_id given? */
+	if (isset ($_REQUEST['host_id']) and !empty ($_REQUEST['host_id']))
 	{
-		$host_id = intval($_REQUEST['host_id']);
+		$host_id = intval ($_REQUEST['host_id']);
 		//if($host_id>=0) $SQL_picklist .= " and data_local.host_id=$host_id ";
+	}
+
+	/* If the editor gave us the links source node name, try to find the device_id
+	 * so we can present the user with the interfaces of this particular device. */
+	if (isset ($_REQUEST['node1']) and !empty ($_REQUEST['node1']))
+	{
+		$node1 = $_REQUEST['node1'];
+		$node1_id = dbFetchCell ("SELECT device_id FROM devices where hostname like ?", array ("%$node1%"));
+		if ($node1_id)
+			$host_id = $node1_id;
 	}
 	
 	//$SQL_picklist .= " order by name_cache;";

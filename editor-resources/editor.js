@@ -240,6 +240,8 @@ function do_submit()
 
 function librenmspicker()
     {
+    node1 = document.getElementById('link_nodename1a').textContent;
+
     // make sure it isn't already opened
     if (!newWindow || newWindow.closed)
         {
@@ -253,7 +255,7 @@ function librenmspicker()
         }
 
     // newWindow.location = "data-pick.php?command=link_step1";
-    newWindow.location = "data-pick.php?command=link_step1";
+    newWindow.location = "data-pick.php?command=link_step1&node1=" + node1;
     }
 
 
