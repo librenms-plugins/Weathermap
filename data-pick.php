@@ -320,7 +320,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 	 * so we can present the user with the interfaces of this particular device. */
 	if (isset ($_REQUEST['node1']) and !empty ($_REQUEST['node1']))
 	{
-		$node1 = $_REQUEST['node1'];
+		$node1 = strtolower ($_REQUEST['node1']);
 		$node1_id = dbFetchCell ("SELECT device_id FROM devices where hostname like ?", array ("%$node1%"));
 		if ($node1_id)
 			$host_id = $node1_id;
