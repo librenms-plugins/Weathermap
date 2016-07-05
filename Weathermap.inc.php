@@ -40,7 +40,9 @@ if(! is_writable('plugins/Weathermap/configs')) {
   foreach($images as $image) {
     $overlib = pathinfo($image);
     $overlib = $overlib['dirname'] . '/' . substr($overlib['basename'], 0, strrpos($overlib['basename'], '.')) . '.html';
-    echo('<li><a href="' . $overlib . '"><img class="img-responsive" src="' . $image . '"/></a></li>');
+    echo('<div class="panel panel-default panel-condensed">
+        <a href="' . $overlib . '"><img class="img-responsive" src="' . $image . '"/></a></li>
+        </div>');
   }
   echo('</ul>
     </div>');
