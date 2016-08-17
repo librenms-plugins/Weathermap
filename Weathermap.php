@@ -1,7 +1,5 @@
 <?php
 
-namespace LibreNMS\Plugins;
-
 class Weathermap {
 
   public function menu() {
