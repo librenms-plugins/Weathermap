@@ -24,13 +24,6 @@ This program is free software: you can redistribute it and/or modify
 // Set variables for map-poller.php
 $basehref='/plugins/Weathermap/';
 
-// Valid config.php paths
-$config_file_paths = array (
-	'/etc/librenms/config.php',
-	'/opt/librenms/config.php',
-	'../../../config.php',
-);
-
 if (php_sapi_name() != 'cli') {
 	echo "ERROR: map-poller.php should ONLY be run as a CGI script!\n";
 	exit;
@@ -53,41 +46,16 @@ if (isset($options['d']))
 	ini_set('error_reporting', 0);
 }
 
+// Include config first to get install dir, then load defaults and config
+// again to get full set of config values.
+$init_modules = array('web');
+require realpath(__DIR__ . '/../../..') . '/includes/init.php';
 
 // Change to directory that map-poller was run from.
 // Thank you to Supun Rathnayake (https://twitter.com/supunr) for the bug report
 // and fix for includes being set incorrectly and changing map-poller to chdir from
 // where it's run.
 chdir(dirname($argv[0]));
-
-// Try to find most appropriate librenms config file and installation dir
-$config_file_path = NULL;
-$librenms_base = '../../../';
-
-foreach ($config_file_paths as $path) {
-	if (file_exists ($path)) {
-		$config_file_path = $path;
-		break;
-	}
-}
-
-if (! $config_file_path) {
-	echo "ERROR: map-poller.php: No valid libreNMS config.php file found!\n";
-	echo "I looked at " . join (', ', $config_file_paths) . "\n";
-	exit;
-}
-
-// Include config first to get install dir, then load defaults and config
-// again to get full set of config values.
-require ("$config_file_path");
-$librenms_base = $config['install_dir'];
-
-include("$librenms_base/includes/defaults.inc.php");
-require("$librenms_base/config.php");
-include("$librenms_base/includes/definitions.inc.php");
-include("$librenms_base/includes/functions.php");
-include("$librenms_base/includes/polling/functions.inc.php");
-
 $conf_dir = 'configs/';
 
 if (is_dir($conf_dir)) {
