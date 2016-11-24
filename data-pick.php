@@ -7,15 +7,7 @@ $ignore_librenms=FALSE;
 $config['base_url'] = '/';
 $whats_installed = '';
 
-$config_file_path = Null;
 $librenms_base = '../../../';
-
-// Valid config.php paths
-$config_file_paths = array (
-	'/etc/librenms/config.php',
-	'/opt/librenms/config.php',
-	'../../../config.php',
-);
 
 $weathermap_config = array (
 	'show_interfaces' => 'all',
@@ -38,36 +30,17 @@ $valid_show_interfaces = array (
 	'0'    => 0,
 );
 
-// Try to find most appropriate librenms config file
-foreach ($config_file_paths as $path) {
-	if (file_exists ($path)) {
-		$config_file_path = $path;
-		break;
-	}
-}
-
-// check if the goalposts have moved
-if (file_exists ($config_file_path)) {
 	/*
 	 * Include the LibreNMS config, so we know about the database.
 	 *
 	 * Include config first to get install dir, then load defaults and config
 	 * again to get full set of config values.
 	 */
-	require ($config_file_path);
-	$librenms_base = $config['install_dir'];
-	include_once ("$librenms_base/includes/defaults.inc.php");
 	/* Load Weathermap config defaults, see file for description. */
-	include_once ("defaults.inc.php");
-	require ($config_file_path);
 
-	// FIXME: Why is this neccessary?!
-	chdir ("$librenms_base/html");
+    $init_modules = array('web', 'auth');
+    require realpath(__DIR__ . '/../../..') . '/includes/init.php';
 
-	include_once("$librenms_base/includes/definitions.inc.php");
-	include_once("$librenms_base/includes/functions.php");
-	include_once("$librenms_base/html/includes/functions.inc.php");
-	require_once("$librenms_base/html/includes/authenticate.inc.php");
 	if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated'])) {
 		header('Location: /');
 	}
@@ -83,10 +56,6 @@ if (file_exists ($config_file_path)) {
 		$weathermap_config['show_interfaces'] = $valid_show_interfaces[$config['plugins']['Weathermap']['show_interfaces']];
 	elseif (validate_device_id ($config['plugins']['Weathermap']['show_interfaces']))
 		$weathermap_config['show_interfaces'] = $config['plugins']['Weathermap']['show_interfaces'];
-}
-else {
-	$librenms_found = FALSE;
-}
 
 $link = mysqli_connect($config['db_host'],$config['db_user'],$config['db_pass'],$config['db_name'])
                 or die('Could not connect: ' . mysqli_error($link));

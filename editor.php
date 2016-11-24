@@ -46,12 +46,8 @@ if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
 {
   // include the cacti-config, so we know about the database
   chdir('../../');
-  include_once("../includes/defaults.inc.php");
-  include_once("../config.php");
-  include_once("../includes/definitions.inc.php");
-  include_once("../includes/functions.php");
-  include_once("includes/functions.inc.php");
-  require_once("includes/authenticate.inc.php");
+  $init_modules = array('web', 'auth');
+  require realpath(__DIR__ . '/../../..') . '/includes/init.php';
   if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated']))
   {
     header('Location: /');
