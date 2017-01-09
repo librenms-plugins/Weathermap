@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-// Copyright (C) 2013 Neil Lathwood neil@lathwood.co.uk
+// Copyright (C) 2013-2017 Neil Lathwood neil@lathwood.co.uk
 // Copyright (C) 2016 Maximilan Wilhelm <max@rfc2324.org>
 /**
 
