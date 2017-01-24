@@ -57,7 +57,7 @@ $valid_show_interfaces = array (
 	elseif (validate_device_id ($config['plugins']['Weathermap']['show_interfaces']))
 		$weathermap_config['show_interfaces'] = $config['plugins']['Weathermap']['show_interfaces'];
 
-$link = mysqli_connect($config['db_host'],$config['db_user'],$config['db_pass'],$config['db_name'])
+$link = mysqli_connect($config['db_host'],$config['db_user'],$config['db_pass'],$config['db_name'],$config['db_port'])
                 or die('Could not connect: ' . mysqli_error($link));
 
 // ******************************************
