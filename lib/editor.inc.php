@@ -103,6 +103,87 @@ function wm_editor_sanitize_conffile($filename) {
     return $filename;
 }
 
+
+function list_weathermaps($mapdir)
+{
+    //return array of Weathermaps
+    //
+    global $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror, $action;
+
+        $titles = array();
+
+    $errorstring="";
+
+    if (is_dir($mapdir)) {
+        $n=0;
+        $dh=opendir($mapdir);
+
+        if ($dh) {
+            while (false !== ($file = readdir($dh))) {
+            $realfile=$mapdir . '/' . $file;
+            $note = "";
+
+            // skip directories, unreadable files, .files and anything that doesn't come through the sanitiser unchanged
+            if ( (is_file($realfile)) && (is_readable($realfile)) && (!preg_match("/^\./",$file) )  && ( wm_editor_sanitize_conffile($file) == $file ) ) {
+                if (!is_writable($realfile)) {
+                    $note .= "(read-only)";
+                }
+                $title=$file;
+                $fd=fopen($realfile, "r");
+                if ($fd) {
+                    while (!feof($fd)) {
+                        $buffer=fgets($fd, 4096);
+
+                        if (preg_match("/^\s*TITLE\s+(.*)/i", $buffer, $matches)) {
+                            $title= wm_editor_sanitize_string($matches[1]);
+                        }
+                        if (preg_match("/^\s*HTMLOUTPUTFILE\s+(.*)/i", $buffer, $matches)) {
+                            $page= wm_editor_sanitize_string($matches[1]);
+                        }
+                    }
+
+                    fclose ($fd);
+                    $titles[$file] = $title;
+					$pages[$file] = $page;
+                    $notes[$file] = $note;
+					$files[$file]['title'] = $title;
+					$files[$file]['page'] = $page;
+					$files[$file]['note'] = $note;
+
+                    $n++;
+                }
+            }
+            }
+
+            closedir ($dh);
+        } else {
+            $errorstring = "Can't open mapdir to read.";
+        }
+		ksort($files);
+        ksort($titles);
+		ksort($pages);
+		ksort($notes);
+		d_echo($titles);
+        if ($n == 0) {
+            $errorstring = "No files in mapdir";
+        }
+    } else {
+        $errorstring = "NO DIRECTORY named $mapdir";
+    }
+	//echo $errorstring;
+    return $files;
+
+
+//    if ($errorstring == '') {
+//        foreach ($titles as $file=>$title) {
+//            $nicefile = htmlspecialchars($file);
+//            print "<option value=\"$nicefile\">$nicefile</option>\n";
+//        }
+//    } else {
+//        print '<option value="">'.htmlspecialchars($errorstring).'</option>';
+//    }
+
+}
 function show_editor_startpage()
 {
 	global $mapdir, $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror, $action;

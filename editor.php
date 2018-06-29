@@ -13,19 +13,7 @@ if(! $ENABLED)
     exit();
 }
 
-// sensible defaults
-$mapdir='configs';
-$librenms_base = '../../../';
-$librenms_url = '/';
-$ignore_librenms=FALSE;
-$configerror = '';
-
-$config_loaded = @include_once 'editor-config.php';
-
-// these are all set via the Editor Settings dialog, in the editor, now.
-$use_overlay = FALSE; // set to TRUE to enable experimental overlay showing VIAs
-$use_relative_overlay = FALSE; // set to TRUE to enable experimental overlay showing relative-positioning
-$grid_snap_value = 0; // set non-zero to snap to a grid of that spacing
+require_once 'config.inc.php';
 
 if( isset($_COOKIE['wmeditor']))
 {
