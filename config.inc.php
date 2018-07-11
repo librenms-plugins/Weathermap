@@ -1,7 +1,9 @@
 <?php
 
 // sensible defaults
-$mapdir=dirname(__FILE__)."/configs/";
+
+$conf_dir = 'configs/';
+$mapdir=dirname(__FILE__)."/". $conf_dir;
 
 $librenms_base = '../../../';
 $librenms_url = '/';
@@ -14,4 +16,8 @@ $config_loaded = @include_once 'editor-config.php';
 $use_overlay = FALSE; // set to TRUE to enable experimental overlay showing VIAs
 $use_relative_overlay = FALSE; // set to TRUE to enable experimental overlay showing relative-positioning
 $grid_snap_value = 0; // set non-zero to snap to a grid of that spacing
+
+
+$basehref='/plugins/Weathermap/';
+
 
