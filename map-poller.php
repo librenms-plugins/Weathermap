@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-
+require_once 'config.php';
 // Copyright (C) 2013 Neil Lathwood neil@lathwood.co.uk
 // Copyright (C) 2016 Maximilan Wilhelm <max@rfc2324.org>
 /**
@@ -49,7 +49,7 @@ if (isset($options['d']))
 // Include config first to get install dir, then load defaults and config
 // again to get full set of config values.
 $init_modules = array('web');
-require realpath(__DIR__ . '/../../..') . '/includes/init.php';
+require $librenms_base . '/includes/init.php';
 
 // Change to directory that map-poller was run from.
 // Thank you to Supun Rathnayake (https://twitter.com/supunr) for the bug report
@@ -65,8 +65,8 @@ if (is_dir($conf_dir)) {
 			    	$cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref --chdir ".$config['rrd_dir'];
                                 if ($config['rrdcached']) {
                                     $cmd = $cmd." --daemon ".$config['rrdcached'];
-                                } 
-				$fp = popen($cmd, 'r'); 
+                                }
+				$fp = popen($cmd, 'r');
 				while (!feof($fp)) {
 					$read = fgets($fp);
 					echo $read;

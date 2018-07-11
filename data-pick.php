@@ -1,13 +1,10 @@
 <?php
-
+require_once 'config.php';
 // ******************************************
 // sensible defaults
-$mapdir='configs';
 $ignore_librenms=FALSE;
 $config['base_url'] = '/';
 $whats_installed = '';
-
-$librenms_base = '../../../';
 
 $weathermap_config = array (
 	'show_interfaces' => 'all',
@@ -39,7 +36,7 @@ $valid_show_interfaces = array (
 	/* Load Weathermap config defaults, see file for description. */
 
     $init_modules = array('web', 'auth');
-    require realpath(__DIR__ . '/../../..') . '/includes/init.php';
+    require $librenms_base . '/includes/init.php';
 
 	if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated'])) {
 		header('Location: /');
@@ -129,8 +126,8 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 
 	function filterlist(previous)
 	{
-		var filterstring = $('input#filterstring').val();	
-		
+		var filterstring = $('input#filterstring').val();
+
 		if(filterstring=='')
 		{
 			$('ul#dslist > li').show();
@@ -138,9 +135,9 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 				$("ul#dslist > li:contains('Desc::')").hide();
 			}
 			return;
-		
+
 		} else if(filterstring!=previous)
-		{	
+		{
 				$('ul#dslist > li').hide();
 				$("ul#dslist > li:contains('" + filterstring + "')").show();
 				if($('#ignore_desc').is(':checked')) {
@@ -229,7 +226,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 			self.close();
 		}
 	}
-	
+
 	function applyDSFilterChange(objForm) {
                 strURL = '?host_id=' + objForm.host_id.value;
                 strURL = strURL + '&command=link_step1';
@@ -252,7 +249,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 				}
                 document.location = strURL;
         }
-	
+
 	</script>
 <style type="text/css">
 	body { font-family: sans-serif; font-size: 10pt; }
@@ -271,13 +268,13 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 	//$SQL_picklist = "select data_local.host_id, data_template_data.local_data_id, data_template_data.name_cache, data_template_data.active, data_template_data.data_source_path from data_local,data_template_data,data_input,data_template where data_local.id=data_template_data.local_data_id and data_input.id=data_template_data.data_input_id and data_local.data_template_id=data_template.id ";
 
 	$host_id = $weathermap_config['show_interfaces'];
-	
+
 	$overlib = true;
 	$aggregate = false;
-	
+
 	if(isset($_REQUEST['aggregate'])) $aggregate = ( $_REQUEST['aggregate']==0 ? false : true);
 	if(isset($_REQUEST['overlib'])) $overlib= ( $_REQUEST['overlib']==0 ? false : true);
-	
+
 	/* Explicit device_id given? */
 	if (isset ($_REQUEST['host_id']) and !empty ($_REQUEST['host_id']))
 	{
@@ -294,9 +291,9 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 		if ($node1_id)
 			$host_id = $node1_id;
 	}
-	
+
 	//$SQL_picklist .= " order by name_cache;";
-	
+
 	 // Link query
 	 $result = mysqli_query($link,"SELECT device_id,hostname FROM devices ORDER BY hostname");
 	 //$hosts = mysql_fetch_assoc($result);
@@ -307,7 +304,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 <h3>Pick a data source:</h3>
 
 <form name="mini">
-<?php 
+<?php
 if(sizeof($hosts) > 0) {
 	print 'Host: <select name="host_id"  onChange="applyDSFilterChange(document.mini)">';
 
@@ -356,7 +353,7 @@ if(sizeof($hosts) > 0) {
 			$deleted = $queryrows['deleted'] ? " (D)" : "";
 			echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">". $queryrows['hostname'] . "/" . $queryrows['ifDescr'] . " Desc:" . $queryrows['ifAlias'] . "$deleted</a>";
 			echo "</li>\n";
-			
+
 			$i++;
 		}
 	}
@@ -384,23 +381,23 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 	$host_id = -1;
 	$SQL_picklist = "SELECT `device_id` AS `id`,`hostname` AS `name` FROM devices ORDER BY hostname";
 	//$SQL_picklist = "SELECT 1,2,'Test','Y','/dsad'";
-	
+
 	$overlib = true;
 	$aggregate = false;
-	
+
 	if(isset($_REQUEST['aggregate'])) $aggregate = ( $_REQUEST['aggregate']==0 ? false : true);
 	if(isset($_REQUEST['overlib'])) $overlib= ( $_REQUEST['overlib']==0 ? false : true);
-	
-	
+
+
 	if(isset($_REQUEST['host_id']))
 	{
 		$host_id = intval($_REQUEST['host_id']);
 		//if($host_id>=0) $SQL_picklist .= " and graph_local.host_id=$host_id ";
 	}
-	//$SQL_picklist .= " order by title_cache";	
-	
+	//$SQL_picklist .= " order by title_cache";
+
 	 $query = mysqli_query($link,"SELECT id,hostname AS name FROM `devices` ORDER BY hostname");
-	 $hosts = mysqli_fetch_assoc($query);	
+	 $hosts = mysqli_fetch_assoc($query);
 
 ?>
 <html>
@@ -410,16 +407,16 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 
 	function filterlist(previous)
 	{
-		var filterstring = $('input#filterstring').val();	
-		
+		var filterstring = $('input#filterstring').val();
+
 		if(filterstring=='')
 		{
 			$('ul#dslist > li').show();
 			return;
 		}
-		
+
 		if(filterstring!=previous)
-		{	
+		{
 				$('ul#dslist > li').hide();
 				$("ul#dslist > li:contains('" + filterstring + "')").show();
 				//$('ul#dslist > li').contains(filterstring).show();
@@ -444,7 +441,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 				{
 					strURL = strURL + "&overlib=0";
 				}
-				
+
 				//if( objForm.aggregate.checked)
 				//{
 				//	strURL = strURL + "&aggregate=1";
@@ -455,7 +452,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 				//}
                 document.location = strURL;
         }
-	
+
 	</script>
 	<script type="text/javascript">
 
@@ -480,7 +477,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
                         opener.document.forms["frmMain"].node_new_name.value = graphid;
                         opener.document.forms["frmMain"].node_label.value = name;
 		}
-		self.close();		
+		self.close();
 	}
 	</script>
 <style type="text/css">
@@ -499,7 +496,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 <h3>Pick a graph:</h3>
 
 <form name="mini">
-<?php 
+<?php
 if(sizeof($hosts) > 0) {
 	print 'Host: <select name="host_id"  onChange="applyDSFilterChange(document.mini)">';
 
