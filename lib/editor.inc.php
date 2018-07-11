@@ -110,7 +110,7 @@ function list_weathermaps($mapdir)
     //
     global $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror, $action;
 
-        $titles = array();
+    $titles = array();
 
     $errorstring="";
 
@@ -170,19 +170,8 @@ function list_weathermaps($mapdir)
     } else {
         $errorstring = "NO DIRECTORY named $mapdir";
     }
-	//echo $errorstring;
+    // return value
     return $files;
-
-
-//    if ($errorstring == '') {
-//        foreach ($titles as $file=>$title) {
-//            $nicefile = htmlspecialchars($file);
-//            print "<option value=\"$nicefile\">$nicefile</option>\n";
-//        }
-//    } else {
-//        print '<option value="">'.htmlspecialchars($errorstring).'</option>';
-//    }
-
 }
 function show_editor_startpage()
 {
