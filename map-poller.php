@@ -21,8 +21,8 @@ This program is free software: you can redistribute it and/or modify
 **/
 
 
-// Set variables for map-poller.php
-$basehref='/plugins/Weathermap/';
+// Import the config.inc.php file for variables
+include_once 'config.inc.php';
 
 if (php_sapi_name() != 'cli') {
 	echo "ERROR: map-poller.php should ONLY be run as a CGI script!\n";
@@ -56,7 +56,6 @@ require realpath(__DIR__ . '/../../..') . '/includes/init.php';
 // and fix for includes being set incorrectly and changing map-poller to chdir from
 // where it's run.
 chdir(dirname($argv[0]));
-$conf_dir = 'configs/';
 
 if (is_dir($conf_dir)) {
 	if ($dh = opendir($conf_dir)) {
