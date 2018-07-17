@@ -1,5 +1,7 @@
 <?php
 
+namespace LibreNMS\Plugins;
+
 include_once 'lib/editor.inc.php';
 
 class Weathermap {
@@ -23,12 +25,12 @@ class Weathermap {
 
         //Display it if not empty
         if ($count > 0) {
-            echo('<li class="dropdown-submenu"><a href="plugin/p='.get_class().'">'.get_class().'</a>');
+            echo('<li class="dropdown-submenu"><a href="plugin/p='.get_class().'">Weathermap</a>');
             echo $submenu;
             echo ('</li>');
         } else {
             //Create menu without submenu
-            echo('<li><a href="plugin/p='.get_class().'">'.get_class().'</a></li>');
+            echo('<li><a href="plugin/p='.get_class().'">Weathermap</a></li>');
         }
   }
 }
