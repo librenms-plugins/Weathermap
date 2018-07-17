@@ -1,5 +1,7 @@
 <?php
 
+namespace LibreNMS\Plugins;
+
 include_once 'lib/editor.inc.php';
 
 class Weathermap {
