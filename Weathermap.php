@@ -33,7 +33,7 @@ class Weathermap {
 
         //Display it if not empty
         if ($count > 0) {
-            echo('<li class="dropdown-submenu"><a href="plugin/p='.$short.'">'.$short'.</a>');
+            echo('<li class="dropdown-submenu"><a href="plugin/p='.$short.'">'.$short.'</a>');
             echo $submenu;
             echo ('</li>');
         } else {
