@@ -2,7 +2,7 @@
 
 // Assume that this should only be printed if it's not setup correctly.
 if(! is_writable('plugins/Weathermap/configs')) {
-  print_error("The map config directory is not writable by the web server user. You will not be able to edit any files until this is corrected.");
+  echo("The map config directory is not writable by the web server user. You will not be able to edit any files until this is corrected.");
   $readme = @file_get_contents('plugins/Weathermap/INSTALL.md');
   $readme = nl2br($readme);
   echo('<h3>Please ensure you follow the installation instructions below.</h3>');
