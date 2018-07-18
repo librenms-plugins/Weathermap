@@ -1,7 +1,5 @@
 <?php
 
-namespace LibreNMS\Plugins;
-
 include_once 'lib/editor.inc.php';
 
 class Weathermap {
@@ -17,12 +15,7 @@ class Weathermap {
 	$submenu = ' <ul class="dropdown-menu scrollable-menu">';
 	$count = 0;
 
-        //getShortName - might make sense to include this ShortName code into Plugin class somewhere ?
-	if ($pos = strrpos(get_class(), '\\')) { 
-            $short= substr(get_class(), $pos + 1);
-        } else { 
-            $short = $pos;
-        };
+	$short = __CLASS__;
 
 	foreach ($files as $file=>$data) {
             $nicefile = htmlspecialchars($file);
