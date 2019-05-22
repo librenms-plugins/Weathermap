@@ -5,7 +5,7 @@
 $conf_dir = 'configs/';
 $mapdir=dirname(__FILE__)."/". $conf_dir;
 
-$librenms_base = '../../../';
+$librenms_base = realpath(dirname(__FILE__) . '/../../../');
 $librenms_url = '/';
 $ignore_librenms=FALSE;
 $configerror = '';

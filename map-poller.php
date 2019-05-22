@@ -22,7 +22,7 @@ This program is free software: you can redistribute it and/or modify
 
 
 // Import the config.inc.php file for variables
-include_once 'config.inc.php';
+include 'config.inc.php';
 
 if (php_sapi_name() != 'cli') {
 	echo "ERROR: map-poller.php should ONLY be run as a CGI script!\n";
@@ -46,26 +46,22 @@ if (isset($options['d']))
 	ini_set('error_reporting', 0);
 }
 
-// Include config first to get install dir, then load defaults and config
-// again to get full set of config values.
-$init_modules = array('web');
-require realpath(__DIR__ . '/../../..') . '/includes/init.php';
+// Load the librenms config
+chdir($librenms_base);
+$config = json_decode(`./config_to_json.php`, true);
 
-// Change to directory that map-poller was run from.
-// Thank you to Supun Rathnayake (https://twitter.com/supunr) for the bug report
-// and fix for includes being set incorrectly and changing map-poller to chdir from
-// where it's run.
-chdir(dirname($argv[0]));
+// Change to directory that map-poller is in.
+chdir(__DIR__);
 
 if (is_dir($conf_dir)) {
-	if ($dh = opendir($conf_dir)) {
+    if ($dh = opendir($conf_dir)) {
 		while (($file = readdir($dh)) !== false) {
 			if ("." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file) {
 			    	$cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref --chdir ".$config['rrd_dir'];
-                                if ($config['rrdcached']) {
+                                if (!empty($config['rrdcached'])) {
                                     $cmd = $cmd." --daemon ".$config['rrdcached'];
-                                } 
-				$fp = popen($cmd, 'r'); 
+                                }
+				$fp = popen($cmd, 'r');
 				while (!feof($fp)) {
 					$read = fgets($fp);
 					echo $read;

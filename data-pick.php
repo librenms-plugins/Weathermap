@@ -2,12 +2,9 @@
 
 // ******************************************
 // sensible defaults
-$mapdir='configs';
-$ignore_librenms=FALSE;
-$config['base_url'] = '/';
+include 'config.inc.php';
 $whats_installed = '';
 
-$librenms_base = '../../../';
 
 $weathermap_config = array (
 	'show_interfaces' => 'all',
@@ -38,15 +35,16 @@ $valid_show_interfaces = array (
 	 */
 	/* Load Weathermap config defaults, see file for description. */
 
-    $init_modules = array('web', 'auth');
-    require realpath(__DIR__ . '/../../..') . '/includes/init.php';
+    $init_modules = ['web', 'auth'];
+    require $librenms_base . '/includes/init.php';
 
-	if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated'])) {
+	if (!Auth::check()) {
 		header('Location: /');
+		exit;
 	}
 
-	chdir('plugins/Weathermap');
-	$librenms_found = TRUE;
+	chdir($librenms_base . '/plugins/Weathermap');
+	$librenms_found = true;
 
 	/* Validate configuration, see defaults.inc.php for explaination */
 	if (in_array ($config['plugins']['Weathermap']['sort_if_by'], $valid_sort_if_by))
@@ -57,8 +55,6 @@ $valid_show_interfaces = array (
 	elseif (validate_device_id ($config['plugins']['Weathermap']['show_interfaces']))
 		$weathermap_config['show_interfaces'] = $config['plugins']['Weathermap']['show_interfaces'];
 
-$link = mysqli_connect($config['db_host'],$config['db_user'],$config['db_pass'],$config['db_name'],$config['db_port'])
-                or die('Could not connect: ' . mysqli_error($link));
 
 // ******************************************
 
@@ -76,13 +72,6 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step2')
 {
 	$dataid = intval($_REQUEST['dataid']);
 
-	//$SQL_graphid = sprintf("SELECT graph_templates_item.local_graph_id, title_cache FROM graph_templates_item,graph_templates_graph,data_template_rrd where graph_templates_graph.local_graph_id = graph_templates_item.local_graph_id  and task_item_id=data_template_rrd.id and local_data_id=%d LIMIT 1;",$dataid);
-
-	//mysql_selectdb($config['db_name'],$link) or die('Could not select database: '.mysql_error());
-
-	//$result = mysql_query($SQL_graphid) or die('Query failed: ' . mysql_error());
-	//$line = mysql_fetch_array($result, MYSQL_ASSOC);
-	//$graphid = $line['local_graph_id'];
 
 ?>
 <html>
@@ -107,7 +96,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step2')
 		self.close();
 	}
 
-	window.onload = update_source_step2(<?php echo $graphid ?>);
+	window.onload = update_source_step2(<?php echo $dataid ?>);
 
 	</script>
 </head>
@@ -268,8 +257,6 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 <body>
 <?php
 
-	//$SQL_picklist = "select data_local.host_id, data_template_data.local_data_id, data_template_data.name_cache, data_template_data.active, data_template_data.data_source_path from data_local,data_template_data,data_input,data_template where data_local.id=data_template_data.local_data_id and data_input.id=data_template_data.data_input_id and data_local.data_template_id=data_template.id ";
-
 	$host_id = $weathermap_config['show_interfaces'];
 	
 	$overlib = true;
@@ -282,7 +269,6 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 	if (isset ($_REQUEST['host_id']) and !empty ($_REQUEST['host_id']))
 	{
 		$host_id = intval ($_REQUEST['host_id']);
-		//if($host_id>=0) $SQL_picklist .= " and data_local.host_id=$host_id ";
 	}
 
 	/* If the editor gave us the links source node name, try to find the device_id
@@ -290,30 +276,25 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 	if (isset ($_REQUEST['node1']) and !empty ($_REQUEST['node1']))
 	{
 		$node1 = strtolower ($_REQUEST['node1']);
-		$node1_id = dbFetchCell ("SELECT device_id FROM devices where hostname like ?", array ("%$node1%"));
+		$node1_id = \App\Models\Device::where('hostname', 'like', "%$node1%")->value('device_id');
 		if ($node1_id)
 			$host_id = $node1_id;
 	}
-	
-	//$SQL_picklist .= " order by name_cache;";
-	
+
 	 // Link query
-	 $result = mysqli_query($link,"SELECT device_id,hostname FROM devices ORDER BY hostname");
-	 //$hosts = mysql_fetch_assoc($result);
-	 //$result = mysql_query($SQL_picklist);
-	 $hosts = 1;
+     $hosts = \App\Models\Device::orderBy('hostname')->get(['device_id', 'hostname']);
 ?>
 
 <h3>Pick a data source:</h3>
 
 <form name="mini">
 <?php 
-if(sizeof($hosts) > 0) {
+if($hosts->isNotEmpty()) {
 	print 'Host: <select name="host_id"  onChange="applyDSFilterChange(document.mini)">';
 
 	print '<option '.($host_id==-1 ? 'SELECTED' : '' ).' value="-1">Any</option>';
 	print '<option '.($host_id==0 ? 'SELECTED' : '' ).' value="0">None</option>';
-	while ($host = mysqli_fetch_assoc($result))
+	foreach ($hosts as $host)
 	{
 		print '<option ';
 		if($host_id==$host['device_id']) print " SELECTED ";
@@ -334,42 +315,34 @@ if(sizeof($hosts) > 0) {
 	 */
 	$result = Null;
 	if ($host_id != 0) {
-		$query = "SELECT devices.device_id,hostname,ports.port_id,ports.ifAlias,ports.ifIndex,ports.ifDescr,ports.deleted FROM devices LEFT JOIN ports ON devices.device_id=ports.device_id WHERE ports.disabled=0";
-
-		/* ...of specific host/device? */
-		if($host_id > 0) {
-			$query .= " AND devices.device_id='$host_id'";
-		}
-
-		/* ...in specific order? */
-		$query .= " ORDER BY hostname,ports." . $weathermap_config['sort_if_by'];
-		$result = mysqli_query($link,$query);
+	    $devices = \App\Models\Device::when($host_id > 0, function ($query) use ($host_id) {
+	        $query->where('device_id', $host_id);
+        })
+        ->with(['ports' => function ($query) use ($weathermap_config) {
+            $query->orderBy($weathermap_config['sort_if_by']);
+        }])
+        ->orderBy('hostname')
+        ->get();
 	}
 
 	$i=0;
-	if( mysqli_num_rows($result) > 0 )
-	{
-			while ($queryrows = mysqli_fetch_assoc($result)) {
-			echo "<li class=\"row".($i%2)."\">";
-			$key = $queryrows['device_id']."','".$queryrows['hostname']."','".$queryrows['port_id']."','".addslashes($queryrows['ifAlias'])."','".addslashes($queryrows['ifDescr'])."','".$queryrows['ifIndex'];
-			// Indicated if port is marked deleted
-			$deleted = $queryrows['deleted'] ? " (D)" : "";
-			echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">". $queryrows['hostname'] . "/" . $queryrows['ifDescr'] . " Desc:" . $queryrows['ifAlias'] . "$deleted</a>";
-			echo "</li>\n";
-			
-			$i++;
-		}
-	}
-	else
-	{
+    if ($devices->isNotEmpty()) {
+        foreach ($devices as $device) {
+            if (!is_null($device->ports)) {
+                foreach ($device->ports as $port) {
+                    echo "<li class=\"row" . ($i % 2) . "\">";
+                    $key = $device->device_id . "','" . $device->hostname . "','" . $port->port_id . "','" . addslashes($port->ifAlias) . "','" . addslashes($port->ifDescr) . "','" . (int)$port->ifIndex;
+
+                    echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">" . $device->displayName() . "/$port->ifDescr Desc: $port->ifAlias</a>";
+                    echo "</li>\n";
+                }
+                $i++;
+            }
+
+        }
+    } else {
 		print "<li>No results...</li>";
 	}
-
-	// Free resultset
-	//mysql_free_result($result);
-
-	// Closing connection
-	//mysql_close($link);
 
 ?>
 </ul>
@@ -382,8 +355,7 @@ if(sizeof($hosts) > 0) {
 if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 {
 	$host_id = -1;
-	$SQL_picklist = "SELECT `device_id` AS `id`,`hostname` AS `name` FROM devices ORDER BY hostname";
-	//$SQL_picklist = "SELECT 1,2,'Test','Y','/dsad'";
+
 	
 	$overlib = true;
 	$aggregate = false;
@@ -395,12 +367,9 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 	if(isset($_REQUEST['host_id']))
 	{
 		$host_id = intval($_REQUEST['host_id']);
-		//if($host_id>=0) $SQL_picklist .= " and graph_local.host_id=$host_id ";
 	}
-	//$SQL_picklist .= " order by title_cache";	
-	
-	 $query = mysqli_query($link,"SELECT id,hostname AS name FROM `devices` ORDER BY hostname");
-	 $hosts = mysqli_fetch_assoc($query);	
+
+	 $hosts = \App\Models\Device::orderBy('hostname')->get(['device_id AS id', 'hostname AS name']);
 
 ?>
 <html>
@@ -500,7 +469,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='node_step1')
 
 <form name="mini">
 <?php 
-if(sizeof($hosts) > 0) {
+if($hosts->isNotEmpty()) {
 	print 'Host: <select name="host_id"  onChange="applyDSFilterChange(document.mini)">';
 
 	print '<option '.($host_id==-1 ? 'SELECTED' : '' ).' value="-1">Any</option>';
@@ -518,15 +487,15 @@ if(sizeof($hosts) > 0) {
 	print '<input id="overlib" name="overlib" type="checkbox" value="yes" '.($overlib ? 'CHECKED' : '' ).'> <label for="overlib">Set both OVERLIBGRAPH and INFOURL.</label><br />';
 
 	print '</form><div class="listcontainer"><ul id="dslist">';
-	$result = mysqli_query($link,$SQL_picklist);
-	if( mysqli_num_rows($result) > 0)
+
+	if($hosts->isNotEmpty())
 	{
 		$i=0;
-		while($queryrows = mysqli_fetch_assoc($result)) {
+		foreach($hosts as $host) {
 			echo "<li class=\"row".($i%2)."\">";
-			$key = $queryrows['id'];
-			$name = $queryrows['name'];
-			echo "<a href=\"#\" onclick=\"update_source_step1('$key','$name')\">". $queryrows['name'] . "</a>";
+			$key = $host['id'];
+			$name = $host['name'];
+			echo "<a href=\"#\" onclick=\"update_source_step1('$key','$name')\">". $host['name'] . "</a>";
 			echo "</li>\n";
 			$i++;
 		}
