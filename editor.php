@@ -31,7 +31,7 @@ if( isset($config) )
 
 // check if the goalposts have moved
 $librenms_found = false;
-if (is_dir($librenms_base) && file_exists($librenms_base . "/config.php")) {
+if (is_dir($librenms_base) && file_exists($librenms_base . "/.env")) {
     // Boot LibreNMS
     $init_modules = ['web', 'auth'];
     require $librenms_base . '/includes/init.php';
