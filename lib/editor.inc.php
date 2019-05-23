@@ -5,7 +5,7 @@
   * All the functions used by the editor.
   */
 
-/** @function fix_gpc_string 
+/** @function fix_gpc_string
   *
   * Take a string (that we got from $_REQUEST) and make it back to how the
   * user TYPED it, regardless of whether magic_quotes_gpc is turned on or off.
@@ -15,7 +15,7 @@
   * @returns string Fixed string
   *
   */
-function fix_gpc_string($input) 
+function fix_gpc_string($input)
 {
     if (true == function_exists('get_magic_quotes_gpc') && 1 == get_magic_quotes_gpc()) {
         $input = stripslashes($input);
@@ -42,7 +42,7 @@ function wm_editor_sanitize_string($str) {
 }
 
 function wm_editor_validate_bandwidth($bw) {
-  
+
     if(preg_match( "/^(\d+\.?\d*[KMGT]?)$/", $bw) ) {
 	return true;
     }
@@ -51,12 +51,12 @@ function wm_editor_validate_bandwidth($bw) {
 
 function wm_editor_validate_one_of($input,$valid=array(),$case_sensitive=false) {
     if(! $case_sensitive ) $input = strtolower($input);
-    
+
     foreach ($valid as $v) {
 	if(! $case_sensitive ) $v = strtolower($v);
 	if($v == $input) return true;
     }
-    
+
     return false;
 }
 
@@ -65,9 +65,9 @@ function wm_editor_sanitize_name($str) {
     return str_replace( array(" "), "", $str);
 }
 
-function wm_editor_sanitize_selected($str) {        
+function wm_editor_sanitize_selected($str) {
 	$res = urldecode($str);
-	
+
 	if( ! preg_match("/^(LINK|NODE):/",$res)) {
 	    return "";
 	}
@@ -75,30 +75,30 @@ function wm_editor_sanitize_selected($str) {
 }
 
 function wm_editor_sanitize_file($filename,$allowed_exts=array()) {
-    
+
     $filename = wm_editor_sanitize_uri($filename);
-    
+
     if ($filename == "") return "";
-        
+
     $ok = false;
     foreach ($allowed_exts as $ext) {
 	$match = ".".$ext;
-	
+
 	if( substr($filename, -strlen($match),strlen($match)) == $match) {
 	    $ok = true;
 	}
-    }    
+    }
     if(! $ok ) return "";
     return $filename;
 }
 
 function wm_editor_sanitize_conffile($filename) {
-    
+
     $filename = wm_editor_sanitize_uri($filename);
-    
+
     # If we've been fed something other than a .conf filename, just pretend it didn't happen
     if ( substr($filename,-5,5) != ".conf" ) {
-	$filename = ""; 
+	$filename = "";
      }
     return $filename;
 }
@@ -163,7 +163,6 @@ function list_weathermaps($mapdir)
         ksort($titles);
 		ksort($pages);
 		ksort($notes);
-		d_echo($titles);
         if ($n == 0) {
             $errorstring = "No files in mapdir";
         }
@@ -178,8 +177,8 @@ function show_editor_startpage()
 	global $mapdir, $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror, $action;
 
 	$fromplug = false;
-	if (isset($_REQUEST['plug']) && (intval($_REQUEST['plug'])==1) ) { 
-	    $fromplug = true; 
+	if (isset($_REQUEST['plug']) && (intval($_REQUEST['plug'])==1) ) {
+	    $fromplug = true;
 	}
 
 	$matches=0;
@@ -191,21 +190,21 @@ function show_editor_startpage()
 	print 'Sorry, it\'s partly laziness on my part, but you really need JavaScript enabled and DOM support in your browser to use this editor. It\'s a visual tool, so accessibility is already an issue, if it is, and from a security viewpoint, you\'re already running my ';
 	print 'code on your <i>server</i> so either you trust it all having read it, or you\'re already screwed.<P>';
 	print 'If it\'s a major issue for you, please feel free to complain. It\'s mainly laziness as I said, and there could be a fallback (not so smooth) mode for non-javascript browsers if it was seen to be worthwhile (I would take a bit of convincing, because I don\'t see a benefit, personally).</div>';
-	
+
 	$errormessage = "";
 
     if ($configerror!='') {
         $errormessage .= $configerror.'<p>';
     }
-		
+
 	if ( !$librenms_found && !$ignore_librenms) {
 		//$errormessage .= '$cacti_base is not set correctly. Cacti integration will be disabled in the editor.';
 		//$errormessage .= "$librenms_found and $ignore_librenms";
-		//if ($config_loaded != 1) { 
-            	//$errormessage .= " You might need to copy editor-config.php-dist to editor-config.php and edit it."; 
+		//if ($config_loaded != 1) {
+            	//$errormessage .= " You might need to copy editor-config.php-dist to editor-config.php and edit it.";
         	//}
 	}
-	
+
 	if ($errormessage != '') {
 		print '<div class="alert" id="nocacti">'.htmlspecialchars($errormessage).'</div>';
 	}
@@ -216,7 +215,7 @@ function show_editor_startpage()
 	print '<div style="border: 3px dashed red; background: #055; padding: 5px; font-size: 90%;"><b>NOTE:</b> This editor is not finished! There are many features of ';
 	print 'Weathermap that you will be missing out on if you choose to use the editor only.';
 	print 'These include: curves, node offsets, font definitions, colour changing, per-node/per-link settings and image uploading. You CAN use the editor without damaging these features if you added them by hand, however.</div><p>';
-	
+
 	print 'Do you want to:<p>';
 	print 'Create A New Map:<br>';
     if($action == 'newmap') {
@@ -243,7 +242,7 @@ function show_editor_startpage()
 		    while (false !== ($file = readdir($dh))) {
 			$realfile=$mapdir . DIRECTORY_SEPARATOR . $file;
 			$note = "";
-	
+
 			// skip directories, unreadable files, .files and anything that doesn't come through the sanitiser unchanged
 			if ( (is_file($realfile)) && (is_readable($realfile)) && (!preg_match("/^\./",$file) )  && ( wm_editor_sanitize_conffile($file) == $file ) ) {
 				if (!is_writable($realfile)) {
@@ -254,12 +253,12 @@ function show_editor_startpage()
 				if ($fd) {
 					while (!feof($fd)) {
 						$buffer=fgets($fd, 4096);
-	
-						if (preg_match("/^\s*TITLE\s+(.*)/i", $buffer, $matches)) { 
-						    $title= wm_editor_sanitize_string($matches[1]); 
+
+						if (preg_match("/^\s*TITLE\s+(.*)/i", $buffer, $matches)) {
+						    $title= wm_editor_sanitize_string($matches[1]);
 						}
 					}
-	
+
 					fclose ($fd);
 					$titles[$file] = $title;
 					$notes[$file] = $note;
@@ -269,17 +268,17 @@ function show_editor_startpage()
 		    }
 
 		    closedir ($dh);
-		} else { 
-            $errorstring = "Can't open mapdir to read."; 
+		} else {
+            $errorstring = "Can't open mapdir to read.";
         }
-		
+
 		ksort($titles);
-		
-		if ($n == 0) { 
-		    $errorstring = "No files in mapdir"; 
+
+		if ($n == 0) {
+		    $errorstring = "No files in mapdir";
 		}
-	} else { 
-	    $errorstring = "NO DIRECTORY named $mapdir"; 
+	} else {
+	    $errorstring = "NO DIRECTORY named $mapdir";
 	}
 
 	print 'OR<br />Create A New Map as a copy of an existing map:<br>';
@@ -289,7 +288,7 @@ function show_editor_startpage()
 	print '<input name="action" type="hidden" value="newmapcopy">';
 	print '<input name="plug" type="hidden" value="'.$fromplug.'">';
 	print '<select name="sourcemap">';
-	
+
 	if ($errorstring == '') {
 		foreach ($titles as $file=>$title) {
 			$nicefile = htmlspecialchars($file);
@@ -298,7 +297,7 @@ function show_editor_startpage()
 	} else {
 		print '<option value="">'.htmlspecialchars($errorstring).'</option>';
 	}
-	
+
 	print '</select>';
 	print '<input type="submit" value="Create Copy">';
 	print '</form>';
@@ -306,7 +305,7 @@ function show_editor_startpage()
 	print 'Open An Existing Map (looking in ' . htmlspecialchars($mapdir) . '):<ul class="filelist">';
 
 	if ($errorstring == '') {
-		foreach ($titles as $file=>$title) {			
+		foreach ($titles as $file=>$title) {
 			# $title = $titles[$file];
 			$note = $notes[$file];
 			$nicefile = htmlspecialchars($file);
@@ -332,7 +331,7 @@ function snap($coord, $gridsnap = 0)
 {
     if ($gridsnap == 0) {
         return ($coord);
-    } else {        
+    } else {
         $rest = $coord % $gridsnap;
         return ($coord - $rest + round($rest/$gridsnap) * $gridsnap );
     }
@@ -349,8 +348,8 @@ function extract_with_validation($array, $paramarray)
 		$vartype=$var[1];
 		$varreqd=$var[2];
 
-		if ($varreqd == 'req' && !array_key_exists($varname, $array)) { 
-	            $all_present=false; 
+		if ($varreqd == 'req' && !array_key_exists($varname, $array)) {
+	            $all_present=false;
 	        }
 
 		if (array_key_exists($varname, $array)) {
@@ -361,29 +360,29 @@ function extract_with_validation($array, $paramarray)
 			switch ($vartype)
 			{
 			case 'int':
-				if (!preg_match('/^\-*\d+$/', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match('/^\-*\d+$/', $varvalue)) {
+                    $all_present=false;
                 }
 
 				break;
 
 			case 'float':
-				if (!preg_match('/^\d+\.\d+$/', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match('/^\d+\.\d+$/', $varvalue)) {
+                    $all_present=false;
                 }
 
 				break;
 
 			case 'yesno':
-				if (!preg_match('/^(y|n|yes|no)$/i', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match('/^(y|n|yes|no)$/i', $varvalue)) {
+                    $all_present=false;
                 }
 
 				break;
 
 			case 'sqldate':
-				if (!preg_match('/^\d\d\d\d\-\d\d\-\d\d$/i', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match('/^\d\d\d\d\-\d\d\-\d\d$/i', $varvalue)) {
+                    $all_present=false;
                 }
 
 				break;
@@ -393,29 +392,29 @@ function extract_with_validation($array, $paramarray)
 				break;
 
 			case 'ip':
-				if (!preg_match( '/^((\d|[1-9]\d|2[0-4]\d|25[0-5]|1\d\d)(?:\.(\d|[1-9]\d|2[0-4]\d|25[0-5]|1\d\d)){3})$/', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match( '/^((\d|[1-9]\d|2[0-4]\d|25[0-5]|1\d\d)(?:\.(\d|[1-9]\d|2[0-4]\d|25[0-5]|1\d\d)){3})$/', $varvalue)) {
+                    $all_present=false;
                 }
 
 				break;
 
 			case 'alpha':
-				if (!preg_match('/^[A-Za-z]+$/', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match('/^[A-Za-z]+$/', $varvalue)) {
+                    $all_present=false;
                 }
 
 				break;
 
 			case 'alphanum':
-				if (!preg_match('/^[A-Za-z0-9]+$/', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match('/^[A-Za-z0-9]+$/', $varvalue)) {
+                    $all_present=false;
                 }
 
 				break;
 
 			case 'bandwidth':
-				if (!preg_match('/^\d+\.?\d*[KMGT]*$/i', $varvalue)) { 
-                    $all_present=false; 
+				if (!preg_match('/^\d+\.?\d*[KMGT]*$/i', $varvalue)) {
+                    $all_present=false;
                 }
 				break;
 
@@ -425,7 +424,7 @@ function extract_with_validation($array, $paramarray)
 
 				break;
 			}
-			
+
 			if ($all_present) {
 				$candidates["{$prefix}{$varname}"]=$varvalue;
 			}
@@ -433,8 +432,8 @@ function extract_with_validation($array, $paramarray)
 	}
 
 	if ($all_present) {
-	    foreach ($candidates as $key => $value) { 
-		$GLOBALS[$key]=$value; 
+	    foreach ($candidates as $key => $value) {
+		$GLOBALS[$key]=$value;
 	    }
 	}
 
@@ -468,11 +467,11 @@ function get_imagelist($imagedir)
 
 function handle_inheritance(&$map, &$inheritables)
 {
-	foreach ($inheritables as $inheritable) {		
+	foreach ($inheritables as $inheritable) {
 		$fieldname = $inheritable[1];
 		$formname = $inheritable[2];
 		$validation = $inheritable[3];
-		
+
 		$new = $_REQUEST[$formname];
 		if($validation != "") {
 		    switch($validation) {
@@ -484,9 +483,9 @@ function handle_inheritance(&$map, &$inheritables)
 			    break;
 		    }
 		}
-		
-		$old = ($inheritable[0]=='node' ? $map->nodes['DEFAULT']->$fieldname : $map->links['DEFAULT']->$fieldname);	
-		
+
+		$old = ($inheritable[0]=='node' ? $map->nodes['DEFAULT']->$fieldname : $map->links['DEFAULT']->$fieldname);
+
 		if ($old != $new) {
 			if ($inheritable[0]=='node') {
 				$map->nodes['DEFAULT']->$fieldname = $new;
@@ -496,11 +495,11 @@ function handle_inheritance(&$map, &$inheritables)
 					}
 				}
 			}
-			
+
 			if ($inheritable[0]=='link') {
 				$map->links['DEFAULT']->$fieldname = $new;
 				foreach ($map->links as $link) {
-					
+
 					if ($link->name != ":: DEFAULT ::" && $link->$fieldname == $old) {
 						$map->links[$link->name]->$fieldname = $new;
 					}
@@ -513,17 +512,17 @@ function handle_inheritance(&$map, &$inheritables)
 function get_fontlist(&$map,$name,$current)
 {
     $output = '<select class="fontcombo" name="'.$name.'">';
-        
+
     ksort($map->fonts);
 
-    foreach ($map->fonts as $fontnumber => $font) {		
+    foreach ($map->fonts as $fontnumber => $font) {
         $output .= '<option ';
         if ($current == $fontnumber) {
             $output .= 'SELECTED';
         }
         $output .= ' value="'.$fontnumber.'">'.$fontnumber.' ('.$font->type.')</option>';
     }
-        
+
     $output .= "</select>";
 
     return($output);

@@ -30,26 +30,20 @@ if( isset($config) )
 }
 
 // check if the goalposts have moved
-if( is_dir($librenms_base) && file_exists($librenms_base."/config.php") )
-{
-  // include the cacti-config, so we know about the database
-  chdir('../../');
-  $init_modules = array('web', 'auth');
-  require realpath(__DIR__ . '/../../..') . '/includes/init.php';
-  if (empty($_SESSION['authenticated']) || !isset($_SESSION['authenticated']))
-  {
-    header('Location: /');
-  }
-  chdir('plugins/Weathermap');
-  $librenms_found = TRUE;
-}
-else
-{
-	$librenms_found = FALSE;
+$librenms_found = false;
+if (is_dir($librenms_base) && file_exists($librenms_base . "/.env")) {
+    // Boot LibreNMS
+    $init_modules = ['web', 'auth'];
+    require $librenms_base . '/includes/init.php';
+    if (!Auth::check()) {
+        header('Location: /');
+        exit;
+    }
+    chdir($librenms_base . '/html/plugins/Weathermap');
+    $librenms_found = true;
 }
 
-if(! is_writable($mapdir))
-{
+if(! is_writable($mapdir)) {
 	$configerror = "The map config directory is not writable by the web server user. You will not be able to edit any files until this is corrected. [WMEDIT01]";
 }
 
