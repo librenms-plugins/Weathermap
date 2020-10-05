@@ -169,7 +169,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
                 });
         });
 
-        function update_source_step2(graphid,name,portid,ifAlias,ifDesc,ifIndex)
+        function update_source_step2(graphid,name,portid,ifAlias,ifDesc,ifIndex,ifSpeed)
         {
                 var graph_url, hover_url;
 
@@ -184,11 +184,12 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
                         opener.document.forms["frmMain"].node_label.value ='testing';
                         opener.document.forms["frmMain"].link_infourl.value = info_url;
                         opener.document.forms["frmMain"].link_hover.value = graph_url;
+                        opener.document.forms["frmMain"].link_bandwidth_in.value = ifSpeed;
                 }
                 self.close();
         }
 
-        function update_source_step1(dataid,name,portid,ifAlias,ifDesc,ifIndex)
+        function update_source_step1(dataid,name,portid,ifAlias,ifDesc,ifIndex,ifSpeed)
         {
                 // This must be the section that looks after link properties
                 var newlocation;
@@ -210,7 +211,7 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
                 if(document.forms['mini'].overlib.checked)
                 {
 
-                        window.onload = update_source_step2(dataid,name,portid,ifAlias,ifDesc,ifIndex);
+                        window.onload = update_source_step2(dataid,name,portid,ifAlias,ifDesc,ifIndex,ifSpeed);
 
                 }
                 else
@@ -331,9 +332,9 @@ if($hosts->isNotEmpty()) {
             if (!is_null($device->ports)) {
                 foreach ($device->ports as $port) {
                     echo "<li class=\"row" . ($i % 2) . "\">";
-                    $key = $device->device_id . "','" . $device->hostname . "','" . $port->port_id . "','" . addslashes($port->ifAlias) . "','" . addslashes($port->ifDescr) . "','" . (int)$port->ifIndex;
+                    $key = $device->device_id . "','" . $device->hostname . "','" . $port->port_id . "','" . addslashes($port->ifAlias) . "','" . addslashes($port->ifDescr) . "','" . (int)$port->ifIndex . "','" . $port->ifSpeed;
 
-                    echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">" . $device->displayName() . "<br/>".strtoupper($port->ifDescr)." <br/>Desc: ".strtoupper($port->ifAlias)."</a>";
+                    echo "<a href=\"#\" onclick=\"update_source_step1('$key')\">" . $device->displayName() . "<br/>".strtoupper($port->ifDescr)." <br/>Desc: ".strtoupper($port->ifAlias)." <br/> Speed: $port->ifSpeed</a>";
                     echo "</li>\n";
                 }
                 $i++;
