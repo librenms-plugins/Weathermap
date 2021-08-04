@@ -1,4 +1,3 @@
-#E1
 This is  modified version of PHP Network Weathermap (orginal README is below)
 
 The modified version starts at version 0.1 by Neil Lathwood (neil@lathwood.co.uk) for use as a plugin for LibreNMS and currently includes basic support for picking out nodes and links from your LibreNMS install. See INSTALL for details.
