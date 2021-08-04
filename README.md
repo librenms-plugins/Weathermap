@@ -41,3 +41,7 @@ from the excellent Fam Fam Fam Silk icon collection by Mark James:
 http://www.famfamfam.com/lab/icons/silk/
 These are released under the Creative Commons Attribution 2.5 License
 http://creativecommons.org/licenses/by/2.5/
+
+----
+
+Thanks to Edgeuno for the support, visit us at https://edgeuno.com/
