@@ -41,7 +41,7 @@ var helptexts = {
 };
 
 jQuery(document).ready(initJS);
-jQuery(document).unload(cleanupJS);
+jQuery(document).on('unload', cleanupJS);
 
 function initJS()
     {
@@ -85,11 +85,11 @@ function cleanupJS()
 function attach_click_events()
     {  
 
-    jQuery("area[id^=LINK:]").attr("href","#").click(click_handler);
-    jQuery("area[id^=NODE:]").attr("href","#").click(click_handler);
-    jQuery("area[id^=TIMES]").attr("href","#").click(position_timestamp);
-    jQuery("area[id^=LEGEN]").attr("href","#").click(position_legend);
-    
+      jQuery("area[id^='LINK:']").attr("href", "#").click(click_handler);
+      jQuery("area[id^='NODE:']").attr("href", "#").click(click_handler);
+      jQuery("area[id^='TIMES']").attr("href", "#").click(position_timestamp);
+      jQuery("area[id^='LEGEN']").attr("href", "#").click(position_legend);
+
     if(fromplug===1)
     {
         jQuery("#tb_newfile").click( function() {window.location = "weathermap-librenms-plugin-mgmt.php";} )
@@ -119,6 +119,7 @@ function attach_click_events()
     jQuery("#link_delete").click(delete_link);
     jQuery("#link_edit").click(edit_link);
 
+    jQuery("#link_tidy").click(tidy_link);
     jQuery("#link_vert").click(align_link_v);
     jQuery("#link_horiz").click(align_link_h);
     jQuery("#link_via").click(via_link);
@@ -632,17 +633,11 @@ function show_link(name)
             jQuery('#link_commentposin').prepend("<option selected value='" + mylink.commentposin + "'>" + mylink.commentposin + "%</option>");
         }
         
-	var mynode1 = Nodes[mylink.a];
-	var mynode2 = Nodes[mylink.b];
-        //document.getElementById('link_nodename1').firstChild.nodeValue = mylink.a;
-        document.getElementById('link_nodename1').firstChild.nodeValue = mynode1.label;
-        //document.getElementById('link_nodename1a').firstChild.nodeValue = mylink.a;
-        document.getElementById('link_nodename1a').firstChild.nodeValue = mynode1.label;
-        //document.getElementById('link_nodename1b').firstChild.nodeValue = mylink.a;
-        document.getElementById('link_nodename1b').firstChild.nodeValue = mynode1.label;
+        document.getElementById('link_nodename1').firstChild.nodeValue = mylink.a;
+        document.getElementById('link_nodename1a').firstChild.nodeValue = mylink.a;
+        document.getElementById('link_nodename1b').firstChild.nodeValue = mylink.a;
 
-        //document.getElementById('link_nodename2').firstChild.nodeValue = mylink.b;
-        document.getElementById('link_nodename2').firstChild.nodeValue = mynode2.label;
+        document.getElementById('link_nodename2').firstChild.nodeValue = mylink.b;
 
         document.getElementById('param').value = mylink.name;
 
@@ -729,6 +724,12 @@ function align_link_h()
 function align_link_v()
 {
     document.getElementById('action').value = "link_align_vertical";
+    document.frmMain.submit();
+}
+
+function tidy_link()
+{
+    document.getElementById('action').value = "link_tidy";
     document.frmMain.submit();
 }
 

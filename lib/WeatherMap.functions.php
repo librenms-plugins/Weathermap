@@ -1,8 +1,8 @@
 <?php
-// PHP Weathermap 0.97b
-// Copyright Howard Jones, 2005-2012 howie@thingy.com
+// PHP Weathermap 0.98b
+// Copyright Howard Jones, 2005-2020 howie@thingy.com
 // http://www.network-weathermap.com/
-// Released under the GNU Public License
+// Released under the MIT License
 
 // Utility functions
 // Check for GD & PNG support This is just in here so that both the editor and CLI can use it without the need for another file
@@ -130,29 +130,57 @@ function js_escape($str, $wrap=TRUE)
 	return ($str);
 }
 
-function mysprintf($format,$value,$kilo=1000)
+function mysprintf($format, $value, $kilo = 1000)
 {
 	$output = "";
 
 	wm_debug("mysprintf: $format $value\n");
-	if(preg_match("/%(\d*\.?\d*)k/",$format,$matches))
-	{
+	if (preg_match('/%(\d*\.?\d*)k/', $format, $matches)) {
 		$spec = $matches[1];
 		$places = 2;
-		if($spec !='')
-		{
-			preg_match("/(\d*)\.?(\d*)/",$spec,$matches);
-			if($matches[2] != '') $places=$matches[2];
+		if ($spec != '') {
+			preg_match('/(\d*)\.?(\d*)/', $spec, $matches);
+			if ($matches[2] != '') {
+				$places = $matches[2];
+			}
 			// we don't really need the justification (pre-.) part...
-		}	
+		}
 		wm_debug("KMGT formatting $value with $spec.\n");
 		$result = nice_scalar($value, $kilo, $places);
-		$output = preg_replace("/%".$spec."k/",$format,$result);
-	}
-	else
-	{
+		$output = preg_replace("/%" . $spec . "k/", $format, $result);
+	} elseif (preg_match('/%(-*)(\d*)([Tt])/', $format, $matches)) {
+		$spec = $matches [3];
+		$precision = ($matches [2] == '' ? 10 : intval($matches [2]));
+		$joinchar = " ";
+		if ($matches [1] == "-") {
+			$joinchar = " ";
+		}
+		// special formatting for time_t (t) and SNMP TimeTicks (T)
+		if ($spec == "T") {
+			$value = $value / 100;
+		}
+		$results = array();
+		$periods = array(
+			"y" => 24 * 60 * 60 * 365,
+			"d" => 24 * 60 * 60,
+			"h" => 60 * 60,
+			"m" => 60,
+			"s" => 1
+		);
+		foreach ($periods as $periodsuffix => $timeperiod) {
+			$slot = floor($value / $timeperiod);
+			$value = $value - $slot * $timeperiod;
+			if ($slot > 0) {
+				$results [] = sprintf("%d%s", $slot, $periodsuffix);
+			}
+		}
+		if (sizeof($results) == 0) {
+			$results [] = "0s";
+		}
+		$output = implode($joinchar, array_slice($results, 0, $precision));
+	} else {
 		wm_debug("Falling through to standard sprintf\n");
-		$output = sprintf($format,$value);
+		$output = sprintf($format, $value);
 	}
 	return $output;
 }
@@ -249,14 +277,43 @@ function myimagecolorallocate($image, $red, $green, $blue)
 	return (imagecolorallocate($image, $red, $green, $blue));
 }
 
+// PHP < 5.3 doesn't support anonymous functions, so here's a little function for screenshotify
+function screenshotify_xxx($matches)
+{
+	return str_repeat('x',strlen($matches[1]));
+}
+
+
 function screenshotify($input)
 {
-	$tmp = $input;
-	
-	$tmp = preg_replace("/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/","127.0.0.1",$tmp);
-	$tmp = preg_replace("/([A-Za-z]{3,})/e","str_repeat('x',strlen('\\1'))",$tmp);
-				
-	return($tmp);
+	$output = $input;
+	$output = preg_replace ( '/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/', "127.0.0.1", $output );
+	$output = preg_replace_callback ( '/([A-Za-z]{3,})/', "screenshotify_xxx", $output );
+	return ($output);
+}
+
+function is_copy($arr)
+{
+	if ($arr['red1'] == -2 && $arr['green1'] == -2 && $arr['blue1'] == -2) {
+		return true;
+	}
+	return false;
+}
+
+function is_contrast($arr)
+{
+	if ($arr['red1'] == -3 && $arr['green1'] == -3 && $arr['blue1'] == -3) {
+		return true;
+	}
+	return false;
+}
+
+function is_none($arr)
+{
+	if ($arr['red1'] == -1 && $arr['green1'] == -1 && $arr['blue1'] == -1) {
+		return true;
+	}
+	return false;
 }
 
 function render_colour($col)
@@ -473,30 +530,15 @@ function line_crossing($x1,$y1,$x2,$y2, $x3,$y3,$x4,$y4)
     $b2 = -1;   
     $c1 = ($y1 - $slope1 * $x1 );
     $c2 = ($y3 - $slope2 * $x3 );
-    
-    $det_inv = 1/($a1*$b2 - $a2*$b1);
+
+
+    $f = $a1 * $b2 - $a2 * $b1;
+    $det_inv = 1/ $f;
     
     $xi = (($b1*$c2 - $b2*$c1)*$det_inv);
     $yi = (($a2*$c1 - $a1*$c2)*$det_inv);
     
     return(array($xi,$yi));
-}
-
-// rotate a list of points around cx,cy by an angle in radians, IN PLACE
-function RotateAboutPoint(&$points, $cx,$cy, $angle=0)
-{
-	$npoints = count($points)/2;
-	
-	for($i=0;$i<$npoints;$i++)
-	{
-		$ox = $points[$i*2] - $cx;
-		$oy = $points[$i*2+1] - $cy;
-		$rx = $ox * cos($angle) - $oy*sin($angle);
-		$ry = $oy * cos($angle) + $ox*sin($angle);
-		
-		$points[$i*2] = $rx + $cx;
-		$points[$i*2+1] = $ry + $cy;
-	}
 }
 
 // calculate the points for a span of the curve. We pass in the distance so far, and the array index, so that
@@ -1100,7 +1142,13 @@ function draw_straight($image, &$curvepoints, $widths, $outlinecolour, $fillcolo
 				$numpoints++;
 			}
 			// $finalpoints[] contains a complete outline of the line at this stage
-			
+
+			// round to the nearest integer (up OR down). We do this now
+			// so that GD doesn't just round everything down and make straight lines slightly off
+			for ($i=0; $i<sizeof($finalpoints); $i++) {
+				$finalpoints[$i] = round($finalpoints[$i]);
+			}
+
 			if (!is_null($fillcolours[$dir]))
 			{
 				wimagefilledpolygon($image, $finalpoints, count($finalpoints) / 2, $arrowsettings[4]); 
@@ -1280,7 +1328,7 @@ function draw_curve($image, &$curvepoints, $widths, $outlinecolour, $fillcolours
 }
 
 // Take a spine, and strip out all the points that are co-linear with the points either side of them
-function simplify_spine(&$input, $epsilon=1e-10)
+function simplify_spine(&$input, $epsilon=1e-8)
 {   
     $output = array();
     
@@ -1439,7 +1487,7 @@ function calc_offset($offsetstring, $width, $height)
 // These next two are based on perl's Number::Format module
 // by William R. Ward, chopped down to just what I needed
 
-function format_number_new($number, $precision = 2, $trailing_zeroes = 0)
+function format_number($number, $precision = 2, $trailing_zeroes = 0)
 {
 	$sign=1;
 
@@ -1518,7 +1566,7 @@ function nice_bandwidth($number, $kilo = 1000,$decimals=1,$below_one=TRUE)
 		$suffix="n";
 	}
 
-	$result=format_number_new($number, $decimals) . $suffix;
+	$result=format_number($number, $decimals) . $suffix;
 	return ($result);
 }
 
@@ -1576,7 +1624,7 @@ function nice_scalar($number, $kilo = 1000, $decimals=1)
 		$suffix="m";
 	}
 
-	$result = $prefix . format_number_new($number, $decimals) . $suffix;
+	$result = $prefix . format_number($number, $decimals) . $suffix;
 	return ($result);
 }
 
@@ -1597,7 +1645,7 @@ class Point
 {
 	var $x, $y;
 	
-	function Point($x=0,$y=0)
+	function __construct($x=0,$y=0)
 	{
 		$this->x = $x;
 		$this->y = $y;
@@ -1609,7 +1657,7 @@ class Vector
 {
 	var $dx, $dy;
 	
-	function Vector($dx=0,$dy=0)
+	function __construct($dx=0,$dy=0)
 	{
 		$this->dx = $dx;
 		$this->dy = $dy;
@@ -1644,7 +1692,7 @@ class Colour
 	
 	
 	// take in an existing value and create a Colour object for it
-	function Colour()
+	function __construct()
 	{
 		if(func_num_args() == 3) # a set of 3 colours
 		{
@@ -1664,7 +1712,7 @@ class Colour
 			$this->b = $ary[2];
 		}
 	}
-	
+
 	// Is this a transparent/none colour?
 	function is_real()
 	{
@@ -1756,6 +1804,11 @@ class Colour
 	function as_string($format = "RGB(%d,%d,%d)")
 	{
 		return (sprintf($format, $this->r, $this->g, $this->b));
+	}
+
+	function __toString()
+	{
+		return $this->as_string();
 	}
 	
 	function as_config()
@@ -2051,7 +2104,7 @@ function draw_spine($im, $spine,$col)
 
 		if($required_version != "") {	
 			// doesan't need to be complete, just in the right order
-			$known_versions = array("0.97","0.97a","0.97b","0.98");
+			$known_versions = array("0.97","0.97a","0.97b","0.98","0.98a");
 			$my_version = array_search($WEATHERMAP_VERSION,$known_versions);	
 			$req_version = array_search($required_version,$known_versions);	
 			if($req_version > $my_version) {
@@ -2086,4 +2139,3 @@ function draw_spine($im, $spine,$col)
 	
 
 // vim:ts=4:sw=4:
-?>

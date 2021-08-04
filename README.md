@@ -1,4 +1,10 @@
-This is  modified version of PHP Network Weathermap (orginal README is below)
+# Weathermap
+
+This is a modification of the PHP Network Weathermap plugin for libreNMS, the migrations corresponds to version 0.98a of the original Network Weathermap, see: https://github.com/howardjones/network-weathermap/tree/0.98-php7
+
+----
+
+This is  modified version of PHP Network Weathermap (original README is below)
 
 The modified version starts at version 0.1 by Neil Lathwood (neil@lathwood.co.uk) for use as a plugin for LibreNMS and currently includes basic support for picking out nodes and links from your LibreNMS install. See INSTALL for details.
 
@@ -11,7 +17,7 @@ See CHANGES for the most recent updates, listed by version.
 See COPYING for the license under which php-weathermap is released.
 
 There is much more information, tutorials and updates available at:
-    http://www.network-weathermap.com/
+http://www.network-weathermap.com/
 
 
 ----
@@ -31,7 +37,7 @@ jquery-latest.min.js is the jQuery javascript library - written by John Resig an
 http://docs.jquery.com/Licensing
 
 Some of the icons used in the editor, and also supplied in the images/ folder are
-from the excellent Fam Fam Fam Silk icon collection by Mark James: 
-   http://www.famfamfam.com/lab/icons/silk/
+from the excellent Fam Fam Fam Silk icon collection by Mark James:
+http://www.famfamfam.com/lab/icons/silk/
 These are released under the Creative Commons Attribution 2.5 License
-   http://creativecommons.org/licenses/by/2.5/
+http://creativecommons.org/licenses/by/2.5/

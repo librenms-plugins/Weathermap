@@ -1,8 +1,8 @@
 <?php
-// PHP Weathermap 0.97b
-// Copyright Howard Jones, 2005-2012 howie@thingy.com
+// PHP Weathermap 0.98b
+// Copyright Howard Jones, 2005-2020 howie@thingy.com
 // http://www.network-weathermap.com/
-// Released under the GNU Public License
+// Released under the MIT License
 
 require_once "HTML_ImageMap.class.php";
 
@@ -54,7 +54,10 @@ class WeatherMapLink extends WeatherMapItem
 	var $commentoffset_in, $commentoffset_out;
 	var $template;
 
-	function WeatherMapLink() { $this->inherit_fieldlist=array
+	function __construct()
+    {
+
+	    $this->inherit_fieldlist=array
 		(
 			'my_default' => NULL,
 			'width' => 7,
@@ -851,4 +854,3 @@ class WeatherMapLink extends WeatherMapItem
 };
 
 // vim:ts=4:sw=4:
-?>

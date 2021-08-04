@@ -9,6 +9,8 @@ $librenms_base = realpath(dirname(__FILE__) . '/../../../');
 $librenms_url = '/';
 $ignore_librenms=FALSE;
 $configerror = '';
+// Absolute route for the rrd directory
+$rrd_default_path1 = $librenms_base . '/'.'rrd';
 
 $config_loaded = @include_once 'editor-config.php';
 

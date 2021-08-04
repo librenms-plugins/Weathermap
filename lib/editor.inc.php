@@ -43,7 +43,7 @@ function wm_editor_sanitize_string($str) {
 
 function wm_editor_validate_bandwidth($bw) {
 
-    if(preg_match( "/^(\d+\.?\d*[KMGT]?)$/", $bw) ) {
+    if(preg_match( '/^(\d+\.?\d*[KMGT]?)$/', $bw) ) {
 	return true;
     }
     return false;
@@ -82,11 +82,11 @@ function wm_editor_sanitize_file($filename,$allowed_exts=array()) {
 
     $ok = false;
     foreach ($allowed_exts as $ext) {
-	$match = ".".$ext;
+		$match = ".".$ext;
 
-	if( substr($filename, -strlen($match),strlen($match)) == $match) {
-	    $ok = true;
-	}
+		if( substr($filename, -strlen($match),strlen($match)) == $match) {
+			$ok = true;
+		}
     }
     if(! $ok ) return "";
     return $filename;
@@ -98,8 +98,14 @@ function wm_editor_sanitize_conffile($filename) {
 
     # If we've been fed something other than a .conf filename, just pretend it didn't happen
     if ( substr($filename,-5,5) != ".conf" ) {
-	$filename = "";
-     }
+		$filename = "";
+	}
+	// TODO: check how these work
+	# on top of the url stuff, we don't ever need to see a / in a config filename (CVE-2013-3739)
+	if (strstr($filename,"/") !== false ) {
+		$filename = "";
+	}
+
     return $filename;
 }
 
@@ -174,7 +180,7 @@ function list_weathermaps($mapdir)
 }
 function show_editor_startpage()
 {
-	global $mapdir, $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror, $action;
+	global $mapdir, $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror;
 
 	$fromplug = false;
 	if (isset($_REQUEST['plug']) && (intval($_REQUEST['plug'])==1) ) {
@@ -183,7 +189,7 @@ function show_editor_startpage()
 
 	$matches=0;
 
-	print '<html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" media="screen" href="editor-resources/oldeditor.css" /><script type="text/javascript" src="editor-resources/jquery-latest.min.js"></script><script src="editor-resources/editor.js" type="text/javascript"></script><title>PHP Weathermap Editor ' . $WEATHERMAP_VERSION
+	print '<html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" media="screen" href="editor-resources/oldeditor.css" /><script type="text/javascript" src="vendor/jquery/dist/jquery.min.js"></script><script src="editor-resources/editor.js" type="text/javascript"></script><title>PHP Weathermap Editor ' . $WEATHERMAP_VERSION
 		. '</title></head><body>';
 
 	print '<div id="nojs" class="alert"><b>WARNING</b> - ';
@@ -196,7 +202,8 @@ function show_editor_startpage()
     if ($configerror!='') {
         $errormessage .= $configerror.'<p>';
     }
-
+	// NOTE: Change to set for libreNMS
+	// NOTE: Is the following code necessary?
 	if ( !$librenms_found && !$ignore_librenms) {
 		//$errormessage .= '$cacti_base is not set correctly. Cacti integration will be disabled in the editor.';
 		//$errormessage .= "$librenms_found and $ignore_librenms";
@@ -228,6 +235,8 @@ function show_editor_startpage()
 	print '<input name="plug" type="hidden" value="'.$fromplug.'">';
 
 	print '<input type="submit" value="Create">';
+
+	print '<p><small>Note: filenames must contain no spaces and end in .conf</small></p>';
 	print '</form>';
 
 	$titles = array();
@@ -254,7 +263,7 @@ function show_editor_startpage()
 					while (!feof($fd)) {
 						$buffer=fgets($fd, 4096);
 
-						if (preg_match("/^\s*TITLE\s+(.*)/i", $buffer, $matches)) {
+						if (preg_match('/^\s*TITLE\s+(.*)/i', $buffer, $matches)) {
 						    $title= wm_editor_sanitize_string($matches[1]);
 						}
 					}
@@ -320,7 +329,7 @@ function show_editor_startpage()
 
 	print "</div>"; // dlgbody
 	print '<div class="dlgHelp" id="start_help">PHP Weathermap ' . $WEATHERMAP_VERSION
-		. ' Copyright &copy; 2005-2013 Howard Jones - howie@thingy.com<br />The current version should always be <a href="http://www.network-weathermap.com/">available here</a>, along with other related software. PHP Weathermap is licensed under the GNU Public License, version 2. See COPYING for details. This distribution also includes the Overlib library by Erik Bosrup.</div>';
+		. ' Copyright &copy; 2005-2020 Howard Jones - howie@thingy.com<br />The current version should always be <a href="http://www.network-weathermap.com/">available here</a>, along with other related software. PHP Weathermap is licensed under the GNU Public License, version 2. See COPYING for details. This distribution also includes the Overlib library by Erik Bosrup.</div>';
 
 	print "</div>"; // dlgStart
 	print "</div>"; // withjs
@@ -338,7 +347,7 @@ function snap($coord, $gridsnap = 0)
 }
 
 
-function extract_with_validation($array, $paramarray)
+function extract_with_validation($array, $paramarray, $prefix = "")
 {
 	$all_present=true;
 	$candidates=array( );
@@ -528,6 +537,252 @@ function get_fontlist(&$map,$name,$current)
     return($output);
 }
 
+
+function range_overlaps($a_min, $a_max, $b_min, $b_max)
+{
+	if ($a_min > $b_max) {
+		return false;
+	}
+	if ($b_min > $a_max) {
+		return false;
+	}
+
+	return true;
+}
+function common_range ($a_min,$a_max, $b_min, $b_max)
+{
+	$min_overlap = max($a_min, $b_min);
+	$max_overlap = min($a_max, $b_max);
+
+	return array($min_overlap,$max_overlap);
+}
+/* distance - find the distance between two points
+ *
+ */
+function distance ($ax,$ay, $bx,$by)
+{
+	$dx = $bx - $ax;
+	$dy = $by - $ay;
+	return sqrt( $dx*$dx + $dy*$dy );
+}
+
+
+function tidy_links(&$map,$targets, $ignore_tidied=FALSE)
+{
+	// not very efficient, but it saves looking for special cases (a->b & b->a together)
+	$ntargets = count($targets);
+	$i = 1;
+	foreach ($targets as $target) {
+		tidy_link($map, $target, $i, $ntargets, $ignore_tidied);
+		$i++;
+	}
+}
+/**
+ * tidy_link - change link offsets so that link is horizonal or vertical, if possible.
+ *             if not possible, change offsets to the closest facing compass points
+ */
+function tidy_link(&$map,$target, $linknumber=1, $linktotal=1, $ignore_tidied=FALSE)
+{
+	// print "\n-----------------------------------\nTidying $target...\n";
+	if(isset($map->links[$target]) and isset($map->links[$target]->a) ) {
+
+		$node_a = $map->links[$target]->a;
+		$node_b = $map->links[$target]->b;
+
+		$new_a_offset = "0:0";
+		$new_b_offset = "0:0";
+
+		// Update TODO: if the nodes are already directly left/right or up/down, then use compass-points, not pixel offsets
+		// (e.g. N90) so if the label changes, they won't need to be re-tidied
+
+		// First bounding box in the node's boundingbox array is the icon, if there is one, or the label if not.
+		$bb_a = $node_a->boundingboxes[0];
+		$bb_b = $node_b->boundingboxes[0];
+
+		// figure out if they share any x or y coordinates
+		$x_overlap = range_overlaps($bb_a[0], $bb_a[2], $bb_b[0], $bb_b[2]);
+		$y_overlap = range_overlaps($bb_a[1], $bb_a[3], $bb_b[1], $bb_b[3]);
+
+		$a_x_offset = 0; $a_y_offset = 0;
+		$b_x_offset = 0; $b_y_offset = 0;
+
+		// if they are side by side, and there's some common y coords, make link horizontal
+		if ( !$x_overlap && $y_overlap ) {
+			// print "SIDE BY SIDE\n";
+
+			// snap the X coord to the appropriate edge of the node
+			if ($bb_a[2] < $bb_b[0]) {
+				$a_x_offset = $bb_a[2] - $node_a->x;
+				$b_x_offset = $bb_b[0] - $node_b->x;
+			}
+			if ($bb_b[2] < $bb_a[0]) {
+				$a_x_offset = $bb_a[0] - $node_a->x;
+				$b_x_offset = $bb_b[2] - $node_b->x;
+			}
+
+			// this should be true whichever way around they are
+			list($min_overlap,$max_overlap) = common_range($bb_a[1],$bb_a[3],$bb_b[1],$bb_b[3]);
+			$overlap = $max_overlap - $min_overlap;
+			$n = $overlap/($linktotal+1);
+
+			$a_y_offset = $min_overlap + ($linknumber*$n) - $node_a->y;
+			$b_y_offset = $min_overlap + ($linknumber*$n) - $node_b->y;
+
+			$new_a_offset = sprintf("%d:%d", $a_x_offset,$a_y_offset);
+			$new_b_offset = sprintf("%d:%d", $b_x_offset,$b_y_offset);
+		}
+
+		// if they are above and below, and there's some common x coords, make link vertical
+		if ( !$y_overlap && $x_overlap ) {
+			// print "ABOVE/BELOW\n";
+
+			// snap the Y coord to the appropriate edge of the node
+			if ($bb_a[3] < $bb_b[1]) {
+				$a_y_offset = $bb_a[3] - $node_a->y;
+				$b_y_offset = $bb_b[1] - $node_b->y;
+			}
+			if ($bb_b[3] < $bb_a[1]) {
+				$a_y_offset = $bb_a[1] - $node_a->y;
+				$b_y_offset = $bb_b[3] - $node_b->y;
+			}
+
+			list($min_overlap,$max_overlap) = common_range($bb_a[0],$bb_a[2],$bb_b[0],$bb_b[2]);
+			$overlap = $max_overlap - $min_overlap;
+			$n = $overlap/($linktotal+1);
+
+			// move the X coord to the centre of the overlapping area
+			$a_x_offset = $min_overlap + ($linknumber*$n) - $node_a->x;
+			$b_x_offset = $min_overlap + ($linknumber*$n) - $node_b->x;
+
+			$new_a_offset = sprintf("%d:%d", $a_x_offset,$a_y_offset);
+			$new_b_offset = sprintf("%d:%d", $b_x_offset,$b_y_offset);
+		}
+
+		// if no common coordinates, figure out the best diagonal...
+		if ( !$y_overlap && !$x_overlap ) {
+
+			$pt_a = new WMPoint($node_a->x, $node_a->y);
+			$pt_b = new WMPoint($node_b->x, $node_b->y);
+
+
+			$line = new WMLineSegment($pt_a, $pt_b);
+
+			$tangent = $line->vector;
+			$tangent->normalise();
+
+			$normal = $tangent->getNormal();
+
+			$pt_a->AddVector( $normal, 15 * ($linknumber-1) );
+			$pt_b->AddVector( $normal, 15 * ($linknumber-1) );
+
+			$a_x_offset = $pt_a->x - $node_a->x;
+			$a_y_offset = $pt_a->y - $node_a->y;
+
+			$b_x_offset = $pt_b->x - $node_b->x;
+			$b_y_offset = $pt_b->y - $node_b->y;
+
+			$new_a_offset = sprintf("%d:%d", $a_x_offset,$a_y_offset);
+			$new_b_offset = sprintf("%d:%d", $b_x_offset,$b_y_offset);
+
+
+		}
+
+		// if no common coordinates, figure out the best diagonal...
+		// currently - brute force search the compass points for the shortest distance
+		// potentially - intersect link line with rectangles to get exact crossing point
+		if ( 1==0 && !$y_overlap && !$x_overlap ) {
+			// print "DIAGONAL\n";
+
+			$corners = array("NE","E","SE","S","SW","W","NW","N");
+
+			// start with what we have now
+			$best_distance = distance( $node_a->x, $node_a->y, $node_b->x, $node_b->y );
+			$best_offset_a = "C";
+			$best_offset_b = "C";
+
+			foreach ($corners as $corner1) {
+				list ($ax,$ay) = calc_offset($corner1, $bb_a[2] - $bb_a[0], $bb_a[3] - $bb_a[1]);
+
+				$axx = $node_a->x + $ax;
+				$ayy = $node_a->y + $ay;
+
+				foreach ($corners as $corner2) {
+					list($bx,$by) = calc_offset($corner2, $bb_b[2] - $bb_b[0], $bb_b[3] - $bb_b[1]);
+
+					$bxx = $node_b->x + $bx;
+					$byy = $node_b->y + $by;
+
+					$d = distance($axx,$ayy, $bxx, $byy);
+					if($d < $best_distance) {
+						// print "from $corner1 ($axx, $ayy) to $corner2 ($bxx, $byy): ";
+						// print "NEW BEST $d\n";
+						$best_distance = $d;
+						$best_offset_a = $corner1;
+						$best_offset_b = $corner2;
+					}
+				}
+			}
+			// Step back a bit from the edge, to hide the corners of the link
+			$new_a_offset = $best_offset_a."85";
+			$new_b_offset = $best_offset_b."85";
+		}
+
+		// unwritten/implied - if both overlap, you're doing something weird and you're on your own
+		// finally, update the offsets
+		$map->links[$target]->a_offset = $new_a_offset;
+		$map->links[$target]->b_offset = $new_b_offset;
+		// and also add a note that this link was tidied, and is eligible for automatic tidying
+		$map->links[$target]->add_hint("_tidied",1);
+	}
+}
+function untidy_links(&$map)
+{
+	foreach ($map->links as $link)
+	{
+		$link->a_offset = "C";
+		$link->b_offset = "C";
+	}
+}
+function retidy_links(&$map, $ignore_tidied=FALSE)
+{
+	$routes = array();
+	$done = array();
+	foreach ($map->links as $link)
+	{
+		if(isset($link->a)) {
+			$route = $link->a->name . " " . $link->b->name;
+			if(strcmp( $link->a->name, $link->b->name) > 0) {
+				$route = $link->b->name . " " . $link->a->name;
+			}
+			$routes[$route][] = $link->name;
+		}
+	}
+
+	foreach ($map->links as $link)
+	{
+		if(isset($link->a)) {
+			$route = $link->a->name . " " . $link->b->name;
+			if(strcmp( $link->a->name, $link->b->name) > 0) {
+				$route = $link->b->name . " " . $link->a->name;
+			}
+
+			if( ($ignore_tidied || $link->get_hint("_tidied")==1) && !isset($done[$route]) && isset( $routes[$route] ) ) {
+
+				if( sizeof($routes[$route]) == 1) {
+					tidy_link($map,$link->name);
+					$done[$route] = 1;
+				} else {
+					# handle multi-links specially...
+					tidy_links($map,$routes[$route]);
+					// mark it so we don't do it again when the other links come by
+					$done[$route] = 1;
+				}
+			}
+		}
+	}
+}
+
+
 function editor_log($str)
 {
     // $f = fopen("editor.log","a");
@@ -536,4 +791,3 @@ function editor_log($str)
 }
 
 // vim:ts=4:sw=4:
-?>

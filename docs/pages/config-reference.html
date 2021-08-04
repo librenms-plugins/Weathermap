@@ -1,42 +1,50 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang = "en" xml:lang = "en" xmlns = "http://www.w3.org/1999/xhtml">
     <head>
-        <link rel = "stylesheet" type = "text/css" media = "screen" href = "../kube101/css/kube.min.css" />
+        <link rel = "stylesheet" type = "text/css" media = "screen" href = "../../vendor/bootstrap/css/bootstrap.min.css" />        
         <link rel = "stylesheet" type = "text/css" href = "../manual.css" />
-        <title>PHP Weathermap v0.97c - Configuration Reference</title>
+        <title>PHP Weathermap v0.98b - Configuration Reference</title>
     </head>
 
-    <body class="kubepage">
-            <div id = "nav">
-    <ul>
-        <li><a href = "main.html">Main Page</a></li>
-        <li><a href = "main.html#installation">Installation</a></li>
-        <li><a href = "main.html#basics">Basics</a></li>
-        <li><a href = "faq.html">FAQ and Tips</a></li>
-        <li><a href = "main.html#example">Sample Map</a></li>
-        <li><a href = "cli-reference.html">CLI Reference</a></li>
-        <li><a href = "config-reference.html">Config Reference</a></li>
-        <li><a href = "advanced.html">Advanced Topics</a></li>
-        <li><a href = "editor.html">Editor</a></li>
-        <li><a href = "cacti-plugin.html">Cacti Plugin</a></li>
-        <li><a href = "http://www.network-weathermap.com/">Website</a></li>
-    </ul>
+    <body>
+            <nav class="navbar navbar-default" role="navigation">
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header" id="nav">
+			<a class="navbar-brand" href="http://www.network-weathermap.com/">Weathermap
+                v0.98b</a>
+			<ul class="nav navbar-nav">
+				<li><a href="main.html">Contents</a></li>
+				<li><a href="main.html#installation">Installation</a></li>
+				<li><a href="main.html#basics">Basics</a></li>
+				<li><a href="faq.html">FAQ</a></li>
+				<li><a href="main.html#example">Sample Map</a></li>
+				<li><a href="cli-reference.html">CLI Reference</a></li>
+				<li><a href="config-reference.html">Config Reference</a></li>
+				<li><a href="advanced.html">Advanced</a></li>
+				<li><a href="editor.html">Editor</a></li>
+				<li><a href="cacti-plugin.html">Cacti Plugin</a></li>
+				<li><a href="http://www.network-weathermap.com/">Website</a></li>
+			</ul>
+		</div>
+	</div>
 </div>
-	<div id="content">
-	<div id="content2" class="wrapper">
+</nav>    <sdiv id="content">
+    <sdiv id="content2" class="wrapper">
+
+
+<div class="container">
 
 <div id = "header">
-    <h1>PHP Weathermap v0.97c </h1>
+    <h1>PHP Weathermap v0.98b </h1>
 
-    <h4>Copyright &copy; 2005-2013 Howard Jones,
+    <h4>Copyright &copy; 2005-2020 Howard Jones,
     <tt><a href = "mailto:howie@thingy.com">howie@thingy.com</a></tt>. (<a
         href = "http://www.network-weathermap.com/">Website</a>)</h4>
 </div>
-
-
 <h2 id="configref">Configuration Reference</h2><p>This page is automatically compiled, and documents all the
                     configuration directives that are available in PHP Weathermap
-                    v0.97c.  </p>
+                    v0.98b.  </p>
     <h2 class="configsection">Introduction</h2>
         <div class="preamble">
   <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude" id="contents">
@@ -112,6 +120,7 @@
       <p xmlns="" id="context_GLOBAL">
         <a class="tocentry" href="#GLOBAL_BACKGROUND">BACKGROUND</a>
         <a class="tocentry" href="#GLOBAL_COLORS">*COLOR</a>
+        <a class="tocentry" href="#GLOBAL_DATAOUTPUTFILE">DATAOUTPUTFILE</a>
         <a class="tocentry" href="#GLOBAL_FONT">*FONT</a>
         <a class="tocentry" href="#GLOBAL_FONTDEFINE">FONTDEFINE</a>
         <a class="tocentry" href="#GLOBAL_HEIGHT">HEIGHT</a>
@@ -187,7 +196,9 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>NODE Templates in use - with template-only nodes</cite>
+      <small>
+        <cite>NODE Templates in use - with template-only nodes</cite>
+      </small>
       <pre>NODE server
             </pre>
     </blockquote>
@@ -230,13 +241,19 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Example of a 'sub-node', that will be 20 pixels above the main
+      <small>
+        <cite>Example of a 'sub-node', that will be 20 pixels above the main
         node, wherever that gets moved to. It is used to show additional information
         about the main node.</cite>
+      </small>
       <pre>
-                NODE main_node POSITION 200 320 LABEL MAIN
+NODE main_node
+    POSITION 200 320
+    LABEL MAIN
 
-                NODE sub_node POSITION main_node 0 -20 LABEL {nodes:main_node:invalue}
+NODE sub_node
+    POSITION main_node 0 -20
+    LABEL {nodes:main_node:invalue}
             </pre>
     </blockquote>
   </div>
@@ -333,13 +350,17 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Using multiple data sources for one link</cite>
+      <small>
+        <cite>Using multiple data sources for one link</cite>
+      </small>
       <pre>TARGET link1a.rrd link1b.rrd
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>Taking the input from one file, and output from
+      <small>
+        <cite>Taking the input from one file, and output from
         another</cite>
+      </small>
       <pre>TARGET poot.rrd:-:DS1 poot2.rrd:DS0:-
             </pre>
     </blockquote>
@@ -717,7 +738,8 @@
   <div class="description">
  <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">Specify the colours used for drawing the <a href="#NODE_LABEL">LABEL.</a> </p> 
  <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">red, green and blue are numbers from 0 to 255. </p> 
- <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude"><a href="#NODE_COLORS">LABELFONTSHADOWCOLOR,</a> <a href="#NODE_COLORS">LABELBGCOLOR</a> and <a href="#NODE_COLORS">LABELOUTLINECOLOR</a> have an additional 
+ <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude"><a href="#NODE_COLORS">LABELFONTSHADOWCOLOR,</a> <a href="#NODE_COLORS">LABELBGCOLOR</a> and <a href="#NODE_COLORS">LABELOUTLINECOLOR,</a> <a href="#NODE_COLORS">AICONFILLCOLOR</a> and <a href="#NODE_COLORS">AICONOUTLINECOLOR</a> 
+ have an additional 
  option - 'none' 
  - which stops that element of the <a href="#NODE_LABEL">LABEL</a> being drawn. <a href="#NODE_COLORS">LABELFONTSHADOWCOLOR</a> 
  defaults to 'none'. </p> 
@@ -733,6 +755,9 @@
   <div class="changes">
     <h4>Change History</h4>
     <dl class="small">
+      <dt>0.98</dt>
+      <dd>Added 'none' for AICONFILLCOLOR.
+        </dd>
       <dt>0.95</dt>
       <dd>Added 'contrast' and 'copy' options.
         </dd>
@@ -790,7 +815,9 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Typical use of OVERLIBGRAPH</cite>
+      <small>
+        <cite>Typical use of OVERLIBGRAPH</cite>
+      </small>
       <pre>OVERLIBGRAPH http://www.yoursite.net/mrtg/router1-cpu-daily.png
             </pre>
     </blockquote>
@@ -1002,13 +1029,21 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>LINK Templates in use - with template-only links</cite>
-      <pre>LINK bigpipe WIDTH 8 ARROWSTYLE classic
+      <small>
+        <cite>LINK Templates in use - with template-only links</cite>
+      </small>
+      <pre>LINK bigpipe
+    WIDTH 8
+    ARROWSTYLE classic
 
-                LINK smallpipe WIDTH 3 ARROWSTYLE compact
+LINK smallpipe
+    WIDTH 3
+    ARROWSTYLE compact
 
-                # this link uses the bigpipe template, so it doesn't need any
-            formatting/styling commands LINK a_real_link TEMPLATE bigpipe NODES rtr1 rtr2
+# this link uses the bigpipe template, so it doesn't need any formatting/styling commands
+LINK a_real_link
+    TEMPLATE bigpipe
+    NODES rtr1 rtr2
             </pre>
     </blockquote>
   </div>
@@ -1096,33 +1131,49 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Defining a simple link</cite>
-      <pre>LINK mylink NODES node1 node2
+      <small>
+        <cite>Defining a simple link</cite>
+      </small>
+      <pre>LINK mylink
+    NODES node1 node2
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>Two parallel links, using offsets</cite>
-      <pre>LINK firstlink NODES node1:E node2:E
+      <small>
+        <cite>Two parallel links, using offsets</cite>
+      </small>
+      <pre>LINK firstlink
+    NODES node1:E node2:E
 
-                LINK secondlink NODES node1:W node2:W
+LINK secondlink
+    NODES node1:W node2:W
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>Two parallel links, using percentage compass offsets to bring
+      <small>
+        <cite>Two parallel links, using percentage compass offsets to bring
         the links closer together</cite>
+      </small>
       <pre>LINK firstlink NODES node1:E50 node2:E50
 
-                LINK secondlink NODES node1:W50 node2:W50
+LINK secondlink
+    NODES node1:W50 node2:W50
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>An offset link using pixel offsets</cite>
-      <pre>LINK firstlink NODES node1:-10:10 node2:20:12
+      <small>
+        <cite>An offset link using pixel offsets</cite>
+      </small>
+      <pre>LINK firstlink
+    NODES node1:-10:10 node2:20:12
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>An offset link using polar coordinates</cite>
-      <pre>LINK firstlink NODES node1:45r20 node2:225r20
+      <small>
+        <cite>An offset link using polar coordinates</cite>
+      </small>
+      <pre>LINK firstlink
+    NODES node1:45r20 node2:225r20
             </pre>
     </blockquote>
   </div>
@@ -1200,13 +1251,17 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Using multiple data sources for one link</cite>
+      <small>
+        <cite>Using multiple data sources for one link</cite>
+      </small>
       <pre>TARGET link1a.rrd link1b.rrd
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>Taking the input from one file, and output from
+      <small>
+        <cite>Taking the input from one file, and output from
         another</cite>
+      </small>
       <pre>TARGET poot.rrd:-:DS1 poot2.rrd:DS0:-
             </pre>
     </blockquote>
@@ -1334,7 +1389,9 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>A typical ADSL line (as seen from the CPE)</cite>
+      <small>
+        <cite>A typical ADSL line (as seen from the CPE)</cite>
+      </small>
       <pre>BANDWIDTH 2M 256K
             </pre>
     </blockquote>
@@ -1435,9 +1492,10 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Providing more information in the bwlabel</cite>
-      <pre>INBWFORMAT {link:this:inpercent}% of
-            {link:this:max_bandwidth_in:%k}b/sec
+      <small>
+        <cite>Providing more information in the bwlabel</cite>
+      </small>
+      <pre>INBWFORMAT {link:this:inpercent}% of {link:this:max_bandwidth_in:%k}b/sec
             </pre>
     </blockquote>
   </div>
@@ -1882,7 +1940,9 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Typical use of OVERLIBGRAPH</cite>
+      <small>
+        <cite>Typical use of OVERLIBGRAPH</cite>
+      </small>
       <pre>OVERLIBGRAPH http://www.yoursite.net/mrtg/router1-link2-daily.png
             </pre>
     </blockquote>
@@ -2405,14 +2465,40 @@
   <div class="description">
  <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">This specifies the name of the HTML file that will be generated. </p> 
  <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">The equivalent command-line option takes precedence over this configuration 
- line, if both are used. If you are generating maps using the Cacti plugin, then 
- this directive is ignored. </p> 
+ line, if both are used. 
+ </p> 
   </div>
   <div class="changes">
     <h4>Change History</h4>
     <dl class="small">
+      <dt>0.98</dt>
+      <dd>This now creates a second copy of the file in the location specified, when using the
+            Cacti plugin.
+        </dd>
       <dt>0.7</dt>
       <dd>Added HTMLOUTPUTFILE.
+        </dd>
+    </dl>
+  </div>
+</div>
+        <div class="referenceentry">
+  <h3 id="GLOBAL_DATAOUTPUTFILE">DATAOUTPUTFILE</h3>
+  <div class="definition">DATAOUTPUTFILE
+
+        <em class="meta">datafile</em>
+    </div>
+  <div class="description">
+ <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">Specifies a file to write a dump of all the data collected 
+ during the rendering of the map. </p> 
+ <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">The file is in a tab-separated file format suitable for reading using the 
+ <a href="targets.html#wmdata">wmdata datasource plugin</a>, which allows one map to refer to data in another map. </p> 
+ <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">If you are using the Cacti plugin, this data is always saved in the output/ directory, in addition to anywhere you specify with this command. </p> 
+  </div>
+  <div class="changes">
+    <h4>Change History</h4>
+    <dl class="small">
+      <dt>0.98</dt>
+      <dd>Added DATAOUTPUTFILE
         </dd>
     </dl>
   </div>
@@ -2449,13 +2535,12 @@
  The format chosen is based on the file-extension. </p> 
  <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">The equivalent command-line option takes precedence over this configuration 
  line, if both are used. </p> 
- <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">If you are generating maps using the Cacti 
- plugin, then this directive is ignored. You can set the output format in the 
- Cacti Settings page. </p> 
   </div>
   <div class="changes">
     <h4>Change History</h4>
     <dl class="small">
+      <dt>0.98</dt>
+      <dd>This now creates a second copy of the file in the location specified, when using the Cacti plugin.</dd>
       <dt>0.9</dt>
       <dd>Added JPEG and GIF support.
         </dd>
@@ -2541,8 +2626,10 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Defining a new Truetype font, with the font file in the
+      <small>
+        <cite>Defining a new Truetype font, with the font file in the
         weathermap directory</cite>
+      </small>
       <pre>FONTDEFINE 10 VeraBd 16
             </pre>
     </blockquote>
@@ -2597,7 +2684,7 @@
 
         <div class="referenceentry">
   <h3 id="GLOBAL_COLORS">*COLOR</h3>
-  <div class="definition">BGCOLOR <em class="meta">red</em> <em class="meta">green</em> <em class="meta">blue</em></div>
+  <div class="definition">BGCOLOR        <em class="meta">red</em>         <em class="meta">green</em>        <em class="meta">blue</em>     </div>
   <div class="definition">TIMECOLOR
 
         <em class="meta">red</em>
@@ -2622,13 +2709,8 @@
 
         <em class="meta">blue</em>
     </div>
-  <div class="definition">KEYOUTLINECOLOR
-
-        <em class="meta">red</em>
-
-        <em class="meta">green</em>
-
-        <em class="meta">blue</em>
+  <div class="definition">KEYOUTLINECOLOR <em class="meta">red</em> <em class="meta">green</em> <em class="meta">blue</em> </div>
+  <div class="definition">KEYOUTLINECOLOR none
     </div>
   <div class="definition">KEYBGCOLOR
 
@@ -2638,16 +2720,23 @@
 
         <em class="meta">blue</em>
     </div>
+  <div class="definition">KEYBGCOLOR none
+    </div>
   <div class="description">
  <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">Specify the colours used for drawing the global elements of the map. </p> 
  <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">red, green and blue are numbers from 0 to 255. </p> 
+ <p xmlns="http://www.w3.org/1999/xhtml" xmlns:xi="http://www.w3.org/2001/XInclude">You can also choose not to draw either the outline or background rectangle for 
+ keys by specifying 'none' for those. 
+ </p> 
   </div>
   <div class="changes">
     <h4>Change History</h4>
     <dl class="small">
+      <dt>0.98</dt>
+      <dd>Added 'none' option for KEYBGCOLOR and KEYOUTLINECOLOR</dd>
       <dt>0.8</dt>
       <dd>Added TIMECOLOR, TITLECOLOR, KEYTEXTCOLOR,
-        KEYOUTLINECOLOR and KEYBGCOLOR.
+            KEYOUTLINECOLOR and KEYBGCOLOR.
         </dd>
       <dt>0.7</dt>
       <dd>Added BGCOLOR.
@@ -3066,16 +3155,27 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Setting up a (very simple) colour scale. Colours run smoothly
+      <small>
+        <cite>Setting up a (very simple) colour scale. Colours run smoothly
         from green to red.</cite>
+      </small>
       <pre>SCALE 0 100 0 255 0 255 0 0
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>The default scale set</cite>
-      <pre>SCALE 1 10 140 0 255 SCALE 10 25 32 32 255 SCALE 25 40 0 192 255
-            SCALE 40 55 0 240 0 SCALE 55 70 240 240 0 SCALE 70 85 255 192 0 SCALE 85 100
-            255 0 0
+      <small>
+        <cite>The default scale set</cite>
+      </small>
+      <pre>
+SCALE 0 0 192 192 192
+SCALE 0 1 255 255 255
+SCALE 1 10 140 0 255
+SCALE 10 25 32 32 255
+SCALE 25 40 0 192 255
+SCALE 40 55 0 240 0
+SCALE 55 70 240 240 0
+SCALE 70 85 255 192 0
+SCALE 85 100 255 0 0
             </pre>
     </blockquote>
   </div>
@@ -3232,9 +3332,12 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Hiding percentage signs, and the 'absolute zero' SCALE entry
+      <small>
+        <cite>Hiding percentage signs, and the 'absolute zero' SCALE entry
         in a key.</cite>
-      <pre>SET key_hidezero_DEFAULT 1 SET key_hidepercent_DEFAULT 1
+      </small>
+      <pre>SET key_hidezero_DEFAULT 1
+SET key_hidepercent_DEFAULT 1
             </pre>
     </blockquote>
   </div>
@@ -3277,19 +3380,25 @@
   <div class="examples">
     <h4>Examples</h4>
     <blockquote class="example">
-      <cite>Enabling 'bulging link mode' in the link-rendering
+      <small>
+        <cite>Enabling 'bulging link mode' in the link-rendering
         code.</cite>
+      </small>
       <pre>SET link_bulge 1
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>Enabling 'screenshot mode' to anonymise a map in 0.95 or
+      <small>
+        <cite>Enabling 'screenshot mode' to anonymise a map in 0.95 or
         newer.</cite>
+      </small>
       <pre>SET screenshot_mode 1
             </pre>
     </blockquote>
     <blockquote class="example">
-      <cite>Disabling 'WMWARN50' messages from appearing</cite>
+      <small>
+        <cite>Disabling 'WMWARN50' messages from appearing</cite>
+      </small>
       <pre>SET nowarn_WMWARN50 1
             </pre>
     </blockquote>
@@ -3347,6 +3456,6 @@
 </div>
     
 	</div>
-	</div>
+	</sdiv>
 </body>
 </html>
