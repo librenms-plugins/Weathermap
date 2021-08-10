@@ -1,7 +1,7 @@
 <?php
-// Copyright Howard Jones, 2005 howie@thingy.com
+// Copyright Howard Jones, 2005-2020 howie@thingy.com
 // http://wotsit.thingy.com/haj/cacti/
-// Released under the GNU Public License
+// Released under the MIT License
 
 // A simple port of the guts of Apache's mod_imap
 // - if you have an image control in a form, it's not really defined what happens to USEMAP
@@ -109,7 +109,7 @@ class HTML_ImageMap_Area_Polygon extends HTML_ImageMap_Area
 		return ($c);
 	}
 
-	function HTML_ImageMap_Area_Polygon ( $name="", $href="",$coords)
+	function __construct ( $name="", $href="",$coords)
 	{
 		$c = $coords[0];
 
@@ -146,7 +146,7 @@ class HTML_ImageMap_Area_Rectangle extends HTML_ImageMap_Area
 {
 	var $x1,$x2,$y1,$y2;
 
-	function HTML_ImageMap_Area_Rectangle ( $name="", $href="",$coords)
+	function __construct ( $name="", $href="",$coords)
 	{
 
 		$c = $coords[0];
@@ -221,13 +221,13 @@ class HTML_ImageMap_Area_Circle extends HTML_ImageMap_Area
 		$radius1 = ($this->edgey - $this->centy) * ($this->edgey - $this->centy)
 			+ ($this->edgex - $this->centx) * ($this->edgex - $this->centx);
 
-		$radius2 = ($this->edgey - $y) * ($this->edgey - $y)
-			+ ($this->edgex - $x) * ($this->edgex - $x);
+		$radius2 = ($this->centy - $y) * ($this->centy - $y)
+			+ ($this->centx - $x) * ($this->centx - $x);
 
 		return ($radius2 <= $radius1);
 	}
 
-	function HTML_ImageMap_Area_Circle($name="", $href="",$coords)
+	function __construct($name="", $href="",$coords)
 	{
 		$c = $coords[0];
 
@@ -246,7 +246,7 @@ class HTML_ImageMap
 	var $nshapes;
 	var $name;
 
-	function HTML_ImageMap($name="")
+	function __construct($name="")
 	{
 		$this->Reset();
 		$this->name = $name;
@@ -425,4 +425,3 @@ class HTML_ImageMap
 
 }
 // vim:ts=4:sw=4:
-?>

@@ -2,6 +2,10 @@
 	
 require_once 'lib/editor.inc.php';
 require_once 'lib/Weathermap.class.php';
+require_once 'lib/geometry.php';
+require_once 'lib/WMPoint.class.php';
+require_once 'lib/WMVector.class.php';
+require_once 'lib/WMLine.class.php';
 
 // so that you can't have the editor active, and not know about it.
 $ENABLED=true;
@@ -189,16 +193,16 @@ else
 	case 'show_config':
 		header('Content-type: text/plain');
 
-                // Temp fix for CVE-2013-3739 exploit
-                $check_base = realpath($mapdir);
-                $check_path = realpath($mapfile);
+		// Exclusive code for libreNMS
+        // Temp fix for CVE-2013-3739 exploit
+        $check_base = realpath($mapdir);
+        $check_path = realpath($mapfile);
                 
-                if($check_path === false || strpos($check_path, $check_base) !== 0)
-                {
-                  echo('Bad mapname');
-                  exit();
-                  break;
-                }
+        if($check_path === false || strpos($check_path, $check_base) !== 0){
+            echo('Bad mapname');
+            exit();
+            break;
+        }
 		$fd = fopen($mapfile,'r');
 		while (!feof($fd))
 		{
@@ -671,7 +675,7 @@ else
 					    # $log .= "Scale by $scalefactor along link-line";
 					    
 					    // rotate so that link is along the axis
-					    RotateAboutPoint($points,$pivx, $pivy, deg2rad($angle_old));
+					    rotateAboutPoint($points,$pivx, $pivy, deg2rad($angle_old));
 					    // do the scaling in here
 					    for($i=0; $i<(count($points)/2); $i++)
 					    {
@@ -679,7 +683,7 @@ else
 						    $points[$i*2] = $basex;
 					    }
 					    // rotate back so that link is along the new direction
-					    RotateAboutPoint($points,$pivx, $pivy, deg2rad(-$angle_new));
+					    rotateAboutPoint($points,$pivx, $pivy, deg2rad(-$angle_new));
 					    
 					    // now put the modified points back into the vialist again
 					    $v = 0; $i = 0;
@@ -704,6 +708,54 @@ else
 		}
 		break;
 
+
+	case "link_tidy":
+		$map->ReadConfig($mapfile);
+
+		$target = wm_editor_sanitize_name($_REQUEST['param']);
+
+		if(isset($map->links[$target])) {
+			// draw a map and throw it away, to calculate all the bounding boxes
+			$map->DrawMap('null');
+
+			tidy_link($map,$target);
+
+			$map->WriteConfig($mapfile);
+		}
+		break;
+	case "retidy":
+		$map->ReadConfig($mapfile);
+
+		// draw a map and throw it away, to calculate all the bounding boxes
+		$map->DrawMap('null');
+		retidy_links($map);
+
+		$map->WriteConfig($mapfile);
+
+		break;
+
+	case "retidy_all":
+		$map->ReadConfig($mapfile);
+
+		// draw a map and throw it away, to calculate all the bounding boxes
+		$map->DrawMap('null');
+		retidy_links($map,TRUE);
+
+		$map->WriteConfig($mapfile);
+
+		break;
+
+	case "untidy":
+		$map->ReadConfig($mapfile);
+
+		// draw a map and throw it away, to calculate all the bounding boxes
+		$map->DrawMap('null');
+		untidy_links($map);
+
+		$map->WriteConfig($mapfile);
+
+		break;
+// NOTE: LEGACY CODE FROM 0.97c
     case "link_align_horizontal":
 		$map->ReadConfig($mapfile);
 
@@ -769,8 +821,11 @@ else
 		    $map->WriteConfig($mapfile);
 		}
                 break;
+//
 
-	case "delete_link":
+
+
+		case "delete_link":
 		$map->ReadConfig($mapfile);
 
 		$target = wm_editor_sanitize_name($_REQUEST['param']);
@@ -869,7 +924,11 @@ else
 		    $node = new WeatherMapNode;
 		    $node->Reset($map);
 		    $node->CopyFrom($map->nodes[$target]);
-    
+
+			# CopyFrom skips this one, because it's also the function used by template inheritance
+			# - but for Clone, we DO want to copy the template too
+			$node->template = $map->nodes[$target]->template;
+
 		    $node->name = $newnodename;
 		    $node->x += 30;
 		    $node->y += 30;
@@ -925,6 +984,7 @@ else
 <?php
 		// if the cacti config was included properly, then 
 		// this will be non-empty, and we can unhide the cacti links in the Link Properties box
+		// NOTE: change for libreNMS
 		if( ! isset($config['install_dir']) )
 		{
 			echo "    .cactilink { display: none; }\n";
@@ -933,7 +993,8 @@ else
 ?>
 	</style>
   <link rel="stylesheet" type="text/css" media="screen" href="editor-resources/oldeditor.css" />
-<script src="editor-resources/jquery-latest.min.js" type="text/javascript"></script>
+
+<script src="vendor/jquery/dist/jquery.min.js" type="text/javascript"></script>
 <script src="editor-resources/editor.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	
@@ -983,7 +1044,13 @@ else
 	  src="<?php echo $imageurl; ?>" id="xycapture" /><img src=
 	  "<?php echo $imageurl; ?>" id="existingdata" alt="Weathermap" usemap="#weathermap_imap"
 	   />
-	   <div class="debug"><p><strong>Debug:</strong> <a href="?<?php echo ($fromplug==TRUE ? 'plug=1&amp;' : ''); ?>action=nothing&amp;mapname=<?php echo  htmlspecialchars($mapname) ?>">Do Nothing</a> 
+	   <div class="debug"><p><strong>Debug:</strong>
+			   <a href="?<?php echo ($fromplug==TRUE ? 'plug=1&amp;' : ''); ?>action=retidy_all&amp;mapname=<?php echo  htmlspecialchars($mapname) ?>">Re-tidy ALL</a>
+			   <a href="?<?php echo ($fromplug==TRUE ? 'plug=1&amp;' : ''); ?>action=retidy&amp;mapname=<?php echo  htmlspecialchars($mapname) ?>">Re-tidy</a>
+			   <a href="?<?php echo ($fromplug==TRUE ? 'plug=1&amp;' : ''); ?>action=untidy&amp;mapname=<?php echo  htmlspecialchars($mapname) ?>">Un-tidy</a>
+
+
+			   <a href="?<?php echo ($fromplug==TRUE ? 'plug=1&amp;' : ''); ?>action=nothing&amp;mapname=<?php echo  htmlspecialchars($mapname) ?>">Do Nothing</a>
 	   <span><label for="mapname">mapfile</label><input type="text" name="mapname" value="<?php echo htmlspecialchars($mapname); ?>" /></span>
 	   <span><label for="action">action</label><input type="text" id="action" name="action" value="<?php echo htmlspecialchars($newaction); ?>" /></span>
 	  <span><label for="param">param</label><input type="text" name="param" id="param" value="" /></span>
@@ -1171,12 +1238,14 @@ else
 			</tr>
 			<tr>
 			  <th></th>
-			  <td><a class="dlgTitlebar" id="link_delete">Delete
-			  Link</a><a class="dlgTitlebar" id="link_edit">Edit</a><a
-                            class="dlgTitlebar" id="link_vert">Vert</a><a
-                            class="dlgTitlebar" id="link_horiz">Horiz</a><a 
-							class="dlgTitlebar" id="link_via">Via</a> 
-                        </td>
+			  <td>
+                  <a class="dlgTitlebar" id="link_delete">Delete Link</a>
+                  <a class="dlgTitlebar" id="link_edit">Edit</a>
+                  <a class="dlgTitlebar" id="link_vert">Vert</a>
+                  <a class="dlgTitlebar" id="link_horiz">Horiz</a>
+                  <a class="dlgTitlebar" id="link_tidy">Tidy</a>
+                  <a class="dlgTitlebar" id="link_via">Via</a>
+              </td>
 			</tr>
 		  </table>
 	  </div>
@@ -1481,5 +1550,4 @@ else
 <?php
 } // if mapname != ''
 // vim:ts=4:sw=4:
-//}
 ?>
