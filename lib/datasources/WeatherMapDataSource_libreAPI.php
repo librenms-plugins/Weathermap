@@ -14,7 +14,7 @@
 //  USESCALE updown out
 //  TARGET libreAPI:hostname
 
-//  not sure howto pull those values from the actualy librenms config.php so set the env below $weatherapikey $librenmsurl 
+//  set the env below $weatherapikey $librenmsurl 
 
 class WeatherMapDataSource_libreAPI extends WeatherMapDataSource {
 
