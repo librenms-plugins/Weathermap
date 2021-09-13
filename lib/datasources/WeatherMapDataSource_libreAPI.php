@@ -3,7 +3,6 @@
 // - Query Librenms API for device status
 //
 // must have jq & curl installed
-
 // in .conf do
 //
 // 	SCALE updown 0 0  255 0 0
@@ -12,56 +11,64 @@
 // under a node do
 // 	USESCALE updown out
 //  TARGET libreAPI:hostname
+class WeatherMapDataSource_libreAPI extends WeatherMapDataSource
+{
 
-class WeatherMapDataSource_libreAPI extends WeatherMapDataSource {
+    function Init(&$map)
+    {
+        return (true);
+    }
 
-	function Init(&$map)
-	{
-		$this->curl_cmd = "/usr/bin/curl";
-		return(TRUE);
-	}
+    function Recognise($targetstring)
+    {
+        if (preg_match("/^libreAPI:(\S+)$/", $targetstring, $matches))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-	function Recognise($targetstring)
-	{
-		if(preg_match("/^libreAPI:(\S+)$/",$targetstring,$matches))
-		{
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
+    function ReadData($targetstring, &$map, &$item)
+    {
+        //created and set via http://librenms/api-access
+        $weatherapikey = "a3449b6f91cdd76400d0118ba3e8cf12";
+        $librenmsurl = "http://librenms";
+        //set the above to match your env
+        $opts = array(
+            'http' => array(
+                'method' => "GET",
+                'header' => "X-Auth-Token:" . $weatherapikey
+            )
+        );
+        $context = stream_context_create($opts);
+        $data[IN] = NULL;
+        $data[OUT] = NULL;
+        if (preg_match("/^libreAPI:(\S+)$/", $targetstring, $matches))
+        {
+            $target = $matches[1];
+            {
+                $response = file_get_contents($librenmsurl . '/api/v0/devices/' . $target, false, $context);
+                $response = json_decode($response);
+                $item->add_hint("libreAPI_version", $response->devices[0]
+                    ->version);
+                $item->add_hint("libreAPI_IP", $response->devices[0]
+                    ->ip);
+                $item->add_hint("libreAPI_sysDescr", $response->devices[0]
+                    ->sysDescr);
+                $item->add_hint("libreAPI_DUMP", json_encode($response));
+                $data[OUT] = (int)filter_var($response->devices[0]->status, FILTER_VALIDATE_BOOLEAN);
+            }
 
-	function ReadData($targetstring, &$map, &$item)
-	{
-		//created and set via http://librenms/api-access
-		$weatherapikey = "a3449b6f91cdd76400d0118ba3e8cf12";
-		$librenmsurl = "http://librenms";
-		//set the above to match your env
-		$data[IN] = NULL;
-		$data[OUT] = NULL;
-		if(preg_match("/^libreAPI:(\S+)$/",$targetstring,$matches))
-		{
-			$target = $matches[1];
-			if(is_executable($this->curl_cmd))
-			{
-				$command = $this->curl_cmd." -s -H X-Auth-Token:$weatherapikey $librenmsurl/api/v0/devices/$target | jq '.devices[].status'";
-				wm_debug("Running $command\n");
-				$pipe=popen($command, "r");
-				echo "'$pipe'; " . gettype($pipe) . "\n";
-				$data[OUT] = fread($pipe, 2096);
-				echo $pipe;
-				pclose($pipe);
-				//convert the true / flase into int for scale
-				$data[OUT] = (int) filter_var($data[OUT], FILTER_VALIDATE_BOOLEAN);
-				}
-
-			}
-			wm_debug ("ReadData: Returning = ".($data[OUT]===NULL?'NULL':$data[OUT])."\n");
-			return( array($data[IN], $data[OUT]) );
-		}
-	}
-
+        }
+        wm_debug("ReadData: Returning = " . ($data[OUT] === NULL ? 'NULL' : $data[OUT]) . "\n");
+        return (array(
+            $data[IN],
+            $data[OUT]
+        ));
+    }
+}
 
 // vim:ts=4:sw=4:
