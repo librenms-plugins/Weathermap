@@ -249,9 +249,10 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 		$args[] = $start;
 		$args[] = "--end";
 		$args[] = $end;
-		
+
 		// rrdcached Support: Use daemon
-		if ($map->daemon){
+		if ($map->daemon)
+		{
 			$args[] = "--daemon";
 			$args[] = $map->daemon_args;
 		}
@@ -280,7 +281,7 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 			$args[] = "VDEF:agg_out=out,$aggregatefn";
 			$args[] = "PRINT:agg_out:'OUT %lf'";
 		}
-		
+
 		$command = $map->rrdtool;
 		foreach ($args as $arg)
 		{
@@ -380,9 +381,10 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 		$args[] = $start;
 		$args[] = "--end";
 		$args[] = $end;
-		
+
 		// rrdcached Support: Use daemon
-		if ($map->daemon){
+		if ($map->daemon)
+		{
 			$args[] = "--daemon";
 			$args[] = $map->daemon_args;
 		}
