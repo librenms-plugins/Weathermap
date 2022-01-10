@@ -2,6 +2,7 @@
 // Pluggable datasource for PHP Weathermap 0.9
 // - Query Librenms API for device status
 //
+// must have jq & curl installed
 // in .conf do
 //
 // 	SCALE updown 0 0  255 0 0
@@ -50,6 +51,8 @@ class WeatherMapDataSource_libreAPI extends WeatherMapDataSource
             $target = $matches[1];
             {
                 $response = file_get_contents($librenmsurl . '/api/v0/devices/' . $target, false, $context);
+                $ports = file_get_contents($librenmsurl . '/api/v0/devices/' . $target . "/ports/1", false, $context);
+                $ports = json_decode($ports);
                 $response = json_decode($response);
                 $item->add_hint("libreAPI_version", $response->devices[0]
                     ->version);
@@ -57,7 +60,15 @@ class WeatherMapDataSource_libreAPI extends WeatherMapDataSource
                     ->ip);
                 $item->add_hint("libreAPI_sysDescr", $response->devices[0]
                     ->sysDescr);
-                $item->add_hint("libreAPI_DUMP", json_encode($response));
+                $item->add_hint("libreAPI_hardware", $response->devices[0]
+                    ->hardware);
+                $item->add_hint("libreAPI_uptime", $response->devices[0]
+                    ->uptime);
+                $item->add_hint("libreAPI_serial", $response->devices[0]
+                    ->serial);
+                $item->add_hint("libreAPI_MAC", $ports->port->ifPhysAddress);
+                //$item->add_hint("libreAPI_DUMP", json_encode($response));
+
                 $data[OUT] = (int)filter_var($response->devices[0]->status, FILTER_VALIDATE_BOOLEAN);
             }
 
