@@ -31,10 +31,49 @@ class WeatherMapDataSource_libreAPI extends WeatherMapDataSource
         }
     }
 
+    function ConvertSectoDay($inputSeconds)
+    {
+      $secondsInAMinute = 60;
+      $secondsInAnHour = 60 * $secondsInAMinute;
+      $secondsInADay = 24 * $secondsInAnHour;
+
+      // Extract days
+      $days = floor($inputSeconds / $secondsInADay);
+
+      // Extract hours
+      $hourSeconds = $inputSeconds % $secondsInADay;
+      $hours = floor($hourSeconds / $secondsInAnHour);
+
+      // Extract minutes
+      $minuteSeconds = $hourSeconds % $secondsInAnHour;
+      $minutes = floor($minuteSeconds / $secondsInAMinute);
+
+      // Extract the remaining seconds
+      $remainingSeconds = $minuteSeconds % $secondsInAMinute;
+      $seconds = ceil($remainingSeconds);
+
+      // Format and return
+      $timeParts = [];
+      $sections = [
+          'day' => (int)$days,
+          'hour' => (int)$hours,
+          'minute' => (int)$minutes,
+          'second' => (int)$seconds,
+      ];
+
+      foreach ($sections as $name => $value){
+          if ($value > 0){
+              $timeParts[] = $value. ' '.$name.($value == 1 ? '' : 's');
+          }
+      }
+
+      return implode(', ', $timeParts);
+    }
+
     function ReadData($targetstring, &$map, &$item)
     {
         //created and set via http://librenms/api-access
-        $weatherapikey = "a3449b6f91cdd76400d0118ba3e8cf12";
+        $weatherapikey = "d8f3e7b79d20e6f41c715e7abcfffaa5";
         $librenmsurl = "http://librenms";
         //set the above to match your env
         $opts = array(
@@ -54,6 +93,8 @@ class WeatherMapDataSource_libreAPI extends WeatherMapDataSource
                 $ports = file_get_contents($librenmsurl . '/api/v0/devices/' . $target . "/ports/1", false, $context);
                 $ports = json_decode($ports);
                 $response = json_decode($response);
+                $n = $response->devices[0]->uptime;
+                $uptimec = $this->ConvertSectoDay($n);
                 $item->add_hint("libreAPI_version", $response->devices[0]
                     ->version);
                 $item->add_hint("libreAPI_IP", $response->devices[0]
@@ -62,8 +103,7 @@ class WeatherMapDataSource_libreAPI extends WeatherMapDataSource
                     ->sysDescr);
                 $item->add_hint("libreAPI_hardware", $response->devices[0]
                     ->hardware);
-                $item->add_hint("libreAPI_uptime", $response->devices[0]
-                    ->uptime);
+                $item->add_hint("libreAPI_uptime", $uptimec);
                 $item->add_hint("libreAPI_serial", $response->devices[0]
                     ->serial);
                 $item->add_hint("libreAPI_MAC", $ports->port->ifPhysAddress);
