@@ -117,6 +117,9 @@ function list_weathermaps($mapdir)
     global $WEATHERMAP_VERSION, $config_loaded, $cacti_found, $ignore_cacti,$configerror, $action;
 
     $titles = array();
+    $files = array();
+    $pages = array();
+    $notes = array();
 
     $errorstring="";
 

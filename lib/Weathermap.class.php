@@ -960,8 +960,8 @@ class WeatherMap extends WeatherMapBase
                                 if ($multiply != 1) {
                                     wm_debug("Pre-multiply: $in $out\n");
 
-                                    $in = $multiply * $in;
-                                    $out = $multiply * $out;
+                                    $in = (int) $multiply * $in;
+                                    $out = (int) $multiply * $out;
 
                                     wm_debug("Post-multiply: $in $out\n");
                                 }
@@ -3491,6 +3491,7 @@ class WeatherMap extends WeatherMapBase
                         $result = imagegif($image, $filename);
                     } elseif (function_exists('imagepng') && preg_match("/\.png/i", $filename)) {
                         wm_debug("Writing PNG file to $filename\n");
+                        print("Writing PNG file to $filename\n");
                         $result = imagepng($image, $filename);
                     } else {
                         wm_warn("Failed to write map image. No function existed for the image format you requested. [WMWARN12]\n");
