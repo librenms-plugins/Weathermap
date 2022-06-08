@@ -194,6 +194,9 @@ if(isset($_REQUEST['command']) && $_REQUEST["command"]=='link_step1')
 		var newlocation;
 		var fullpath;
 
+		// Replace semi-colons by underscores to permit IPv6 addresses
+		var name = name.replace(/:/g,'_');
+
 		var rra_path = <?php echo js_escape('./'); ?>+name+'/port-id';
 
 		if (typeof window.opener == "object") {
