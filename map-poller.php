@@ -53,30 +53,31 @@ $config = json_decode(`./config_to_json.php`, true);
 // Change to directory that map-poller is in.
 chdir(__DIR__);
 
-if (is_dir($conf_dir)) {
-    if ($dh = opendir($conf_dir)) {
-		while (($file = readdir($dh)) !== false) {
-			if ("." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file) 
-			{
-				$cmd = "php ./poller.php --config $conf_dir/$file --base-href $basehref";
-				
-				if (!empty($config['rrdcached'])) 
-				{
-					$cmd = $cmd." --daemon ".$config['rrdcached'];
-				}
-				else
-				{
-					$cmd = $cmd." --chdir ".$config['rrd_dir'];
-				}
-
-				$fp = popen($cmd, 'r');
-				while (!feof($fp)) {
-					$read = fgets($fp);
-					echo $read;
-				}
-				pclose($fp);
-			}
-		}
-	}
-}
+if (is_dir($conf_dir)) {                             
+    if ($dh = opendir($conf_dir)) {                  
+                while (($file = readdir($dh)) !== false) {
+                        if ("." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file)
+                        {                                                                                 
+                                $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
+                                                                                                             
+                                if (!empty($config['rrdcached']))                                            
+                                {                                                                            
+                                        $cmd = $cmd." --daemon ".$config['rrdcached']." --chdir ''";         
+                                }                                                                            
+                                else                                                                         
+                                {                                                                         
+                                        $cmd = $cmd." --chdir ".$config['rrd_dir'];                          
+                                }                                                                            
+                                                                                                             
+                                $fp = popen($cmd, 'r');                                                      
+                                                                                                             
+                                while (!feof($fp)) {                                                         
+                                        $read = fgets($fp);                                                  
+                                        echo $read;                                                          
+                                }                                                                            
+                                pclose($fp);                                                                 
+                        }                                                                                    
+                }                                                                                   
+        }                                                                                           
+}                                                                                                   
 ?>
