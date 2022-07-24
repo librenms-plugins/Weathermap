@@ -633,7 +633,7 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 			{
 				wm_debug("poller_output didn't get anything useful. Kicking it old skool.\n");
 			}
-			if(file_exists($rrdfile))
+			if(file_exists($rrdfile)  || ($map->daemon))
 			{
 				wm_debug ("RRD ReadData: Target DS names are ".$dsnames[IN]." and ".$dsnames[OUT]."\n");
 
