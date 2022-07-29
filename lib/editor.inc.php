@@ -118,7 +118,7 @@ function list_weathermaps($mapdir)
 
     $files = array();
     $titles = array();
-    $pages = array()
+    $pages = array();
     $notes = array();
 
 	$errorstring="";
