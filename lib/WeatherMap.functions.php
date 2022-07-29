@@ -1514,7 +1514,7 @@ function nice_bandwidth($number, $kilo = 1000,$decimals=1,$below_one=TRUE)
 {
 	$suffix='';
 
-	if ($number == 0)
+	if ($number == 0 || !is_int($number))
 		return '0';
 
 	$mega=$kilo * $kilo;
