@@ -1575,7 +1575,7 @@ function nice_scalar($number, $kilo = 1000, $decimals=1)
 	$suffix = '';
 	$prefix = '';
 	
-	if ($number == 0)
+	if ($number == 0 || !is_int($number))if ($number == 0)
 		return '0';
 		
 	if($number < 0)
