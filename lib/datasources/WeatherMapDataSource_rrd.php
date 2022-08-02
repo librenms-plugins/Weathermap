@@ -364,7 +364,15 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource {
 
 		$values = array();
 		$args = array();
+		
+		// rrdcached Support: strip "./" from Data Source
+		if ($map->daemon)
+		{
+			$rrdfile = trim($rrdfile,"^./"); 
+		}
 
+		
+		
 		#### $command = '"'.$map->rrdtool . '" fetch "'.$rrdfile.'" AVERAGE --start '.$start.' --end '.$end;
 		#$command=$map->rrdtool . " fetch $rrdfile $cf --start $start --end $end $extra_options";
 		$args[] = "fetch";
