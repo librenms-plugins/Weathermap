@@ -62,7 +62,7 @@ if (is_dir($conf_dir))
         {
             if ("." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file)
             {                                                                                 
-                $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $weathermap_output";
+                $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
                                                                                                 
                 if (!empty($config['rrdcached']))                                            
                 {                                                                            
