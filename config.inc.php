@@ -9,8 +9,12 @@ $librenms_base = realpath(dirname(__FILE__) . '/../../../');
 $librenms_url = '/';
 $ignore_librenms=FALSE;
 $configerror = '';
+
 // Absolute route for the rrd directory
 $rrd_default_path1 = $librenms_base . '/'.'rrd';
+
+// Loaction of drawn maps 
+$weathermap_output = $librenms_base . '/'.'output';
 
 $config_loaded = @include_once 'editor-config.php';
 
