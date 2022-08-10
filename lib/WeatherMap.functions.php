@@ -1514,7 +1514,7 @@ function nice_bandwidth($number, $kilo = 1000,$decimals=1,$below_one=TRUE)
 {
 	$suffix='';
 
-        if ($number == 0 || !is_int($number))                                                            
+        if ($number == 0)                                                            
         {                                                                                                
                 return '0';                                                                              
         }   
@@ -1577,7 +1577,7 @@ function nice_scalar($number, $kilo = 1000, $decimals=1)
 	$suffix = '';
 	$prefix = '';
 	
-        if ($number == 0 || !is_int($number))                                                            
+        if ($number == 0)                                                            
         {                                                                                                
                 return '0';                                                                              
         }   
