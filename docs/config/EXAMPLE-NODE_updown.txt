@@ -1,0 +1,25 @@
+//EXAMPLE: configuration for device up state:
+
+//createw fping map
+SCALE fpingupdown 0    0.1    0   255 0 down
+SCALE fpingupdown 0.1  99.9   255 255 0 recovering
+SCALE fpingupdown 99.9 100    255 0   0 up
+
+
+NODE label-change
+    LABEL 192.168.1.111
+    ICON images/Router.png
+    TARGET fping:192.168.1.111
+    USESCALE fpingupdown out percent
+
+NODE icon-change
+    LABEL 192.168.1.111
+    ICON images/Router_{node:this:inscaletag}.gif
+    TARGET fping:192.168.1.111
+    USESCALE fpingupdown out percent
+    
+NODE icon-scale
+    LABEL 192.168.1.111
+    ICON images/Router.png  //grey
+    TARGET fping:192.168.1.111
+    USEICONSCALE fpingupdown out percent

@@ -16,7 +16,7 @@ class WeatherMapDataSource_fping extends WeatherMapDataSource {
 		# 
 		# You may need to change the line below to have something like "/usr/local/bin/fping" or "/usr/bin/fping" instead.
 		#
-		$this->fping_cmd = "/usr/local/sbin/fping";
+		$this->fping_cmd = "/usr/sbin/fping";
 	
 		return(TRUE);
 	}

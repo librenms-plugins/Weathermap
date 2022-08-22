@@ -1514,8 +1514,10 @@ function nice_bandwidth($number, $kilo = 1000,$decimals=1,$below_one=TRUE)
 {
 	$suffix='';
 
-	if ($number == 0)
-		return '0';
+        if ($number == 0 || !is_numeric($number))                                                           
+        {                                                                                                
+                return '0';                                                                              
+        }   
 
 	$mega=$kilo * $kilo;
 	$giga=$mega * $kilo;
@@ -1575,8 +1577,10 @@ function nice_scalar($number, $kilo = 1000, $decimals=1)
 	$suffix = '';
 	$prefix = '';
 	
-	if ($number == 0)
-		return '0';
+       if ($number == 0 || !is_numeric($number))                                                          
+        {                                                                                                
+                return '0';                                                                              
+        }   
 		
 	if($number < 0)
 	{
