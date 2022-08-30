@@ -67,7 +67,14 @@ if (is_dir($conf_dir))
 
                 if (!empty($config['rrdcached']))
                 {
-                    $cmd = $cmd." --daemon ".$config['rrdcached']." --chdir ''";
+                    if (str_contains($config['rrdcached'], 'unix'))
+                    {
+                        $cmd = $cmd." --daemon ".$config['rrdcached'];
+                    }
+                    else
+                    {
+                        $cmd = $cmd." --daemon ".$config['rrdcached']." --chdir ''";
+                    }
                 }
                 else
                 {
