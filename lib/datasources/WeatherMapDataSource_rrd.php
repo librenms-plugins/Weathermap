@@ -207,10 +207,10 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource
         $args = array();
         
         // rrdcached Support: strip "./" from Data Source
-        if ($map->daemon)
+/*        if ($map->daemon)
         {
             $rrdfile = trim($rrdfile,"^./"); 
-        }
+        } */
         
         $args[] = "fetch";
         $args[] = $rrdfile;
