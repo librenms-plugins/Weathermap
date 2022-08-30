@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 // Copyright (C) 2013 Neil Lathwood neil@lathwood.co.uk
