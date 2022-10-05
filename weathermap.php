@@ -278,7 +278,7 @@ if ($map->ReadConfig($configfile))
 
 	// Added the rrd_default_path if cannot be found
     if($rrdbase == '') {
-        $rrdbase = isset($chdir) != '' ? $chdir : $rrd_default_path1;
+        $rrdbase = (isset($chdir) && $chdir !== '') ? $chdir : $rrd_default_path1;
         $map->add_hint('rrd_default_path', $rrdbase);
 
     }
