@@ -67,7 +67,8 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource
         // rrdcached Support: strip "./" from Data Source
         if ($map->daemon)
         {
-            $rrdfile = trim($rrdfile,"^./"); 
+            if (substr($rrdfile, 0, 2) == "./")
+                $rrdfile = substr($rrdfile, 2);
         }
 
         // Assemble an array of command args.
@@ -209,7 +210,8 @@ class WeatherMapDataSource_rrd extends WeatherMapDataSource
         // rrdcached Support: strip "./" from Data Source
         if ($map->daemon)
         {
-            $rrdfile = trim($rrdfile,"^./"); 
+            if (substr($rrdfile, 0, 2) == "./")
+                $rrdfile = substr($rrdfile, 2);
         }
         
         $args[] = "fetch";
