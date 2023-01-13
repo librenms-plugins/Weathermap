@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 
 // Copyright (C) 2013 Neil Lathwood neil@lathwood.co.uk
@@ -54,35 +55,42 @@ $config = json_decode(`./config_to_json.php`, true);
 // Change to directory that map-poller is in.
 chdir(__DIR__);
 
-if (is_dir($conf_dir)) 
-{                             
-    if ($dh = opendir($conf_dir)) 
-    {                  
-        while (($file = readdir($dh)) !== false) 
+if (is_dir($conf_dir))
+{
+    if ($dh = opendir($conf_dir))
+    {
+        while (($file = readdir($dh)) !== false)
         {
             if ("." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file)
-            {                                                                                 
+            {
                 $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
-                                                                                                
-                if (!empty($config['rrdcached']))                                            
-                {                                                                            
-                    $cmd = $cmd." --daemon ".$config['rrdcached']." --chdir ''";         
-                }                                                                            
-                else                                                                         
-                {                                                                         
-                    $cmd = $cmd." --chdir ".$config['rrd_dir'];                          
-                }                                                                            
-                                                                                                
-                $fp = popen($cmd, 'r');                                                      
-                                                                                                
-                while (!feof($fp)) 
-                {                                                         
-                    $read = fgets($fp);                                                  
-                    echo $read;                                                          
-                }                                                                            
-                pclose($fp);                                                                 
-            }                                                                                    
-        }                                                                                   
-    }                                                                                           
-}                                                                                                   
+
+                if (!empty($config['rrdcached']))
+                {
+                    if (str_contains($config['rrdcached'], 'unix'))
+                    {
+                        $cmd = $cmd." --daemon ".$config['rrdcached'];
+                    }
+                    else
+                    {
+                        $cmd = $cmd." --daemon ".$config['rrdcached']." --chdir ''";
+                    }
+                }
+                else
+                {
+                    $cmd = $cmd." --chdir ".$config['rrd_dir'];
+                }
+
+                $fp = popen($cmd, 'r');
+
+                while (!feof($fp))
+                {
+                    $read = fgets($fp);
+                    echo $read;
+                }
+                pclose($fp);
+            }
+        }
+    }
+}
 ?>
