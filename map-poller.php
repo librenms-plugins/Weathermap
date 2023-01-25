@@ -61,7 +61,9 @@ if (is_dir($conf_dir))
     {
         while (($file = readdir($dh)) !== false)
         {
-            if ("." != $file && ".." != $file && ".htaccess" != $file && "index.php" != $file)
+            $allowed = array('conf');
+            $ext = pathinfo($file, PATHINFO_EXTENSION);
+            if (!in_array($ext, $allowed))
             {
                 $cmd = "php ./weathermap.php --config $conf_dir/$file --base-href $basehref";
 
