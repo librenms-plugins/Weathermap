@@ -9,8 +9,8 @@
 // 	SCALE updown 0.5 1 255 255 255
 //
 // under a node do
-// 	USESCALE updown out
-//  TARGET libreAPI:hostname
+// 	USESCALE updown out percent
+//  TARGET libreAPI:{node:this:name}
 class WeatherMapDataSource_libreAPI extends WeatherMapDataSource
 {
 
