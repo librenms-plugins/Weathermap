@@ -1,8 +1,9 @@
 <?php
 // Pluggable datasource for PHP Weathermap 0.9
-// - Query Librenms API for device status
+// - Query Librenms API for device status and details 
 //
 // must have jq & curl installed
+// generate and update the weatherapikey below 
 // in .conf do
 //
 // 	SCALE updown 0 0  255 0 0
