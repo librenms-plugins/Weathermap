@@ -326,7 +326,7 @@ if($hosts->isNotEmpty()) {
 	}
 
 	$i=0;
-    if ($devices->isNotEmpty()) {
+    if ($devices !== null && $devices->isNotEmpty()) {
         foreach ($devices as $device) {
             if (!is_null($device->ports)) {
                 foreach ($device->ports as $port) {
