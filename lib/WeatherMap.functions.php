@@ -268,7 +268,15 @@ function myimagecolorallocate($image, $red, $green, $blue)
 {
 	// it's possible that we're being called early - just return straight away, in that case
 	if(!isset($image)) return(-1);
-	
+
+	// Make sure color values are in a sane range
+	if($red > 255) { $red = 255; }
+	if($green > 255) { $green = 255; }
+	if($blue > 255) { $blue = 255; }
+	if($red < 0) { $red = 0; }
+	if($green < 0) { $green = 0; }
+	if($blue < 0) { $blue = 0; }
+
 	$existing=imagecolorexact($image, $red, $green, $blue);
 
 	if ($existing > -1)
