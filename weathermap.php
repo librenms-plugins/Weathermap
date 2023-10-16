@@ -21,7 +21,7 @@ class weathermap
         $submenu = ' <ul class="dropdown-menu scrollable-menu">';
         $count = 0;
         foreach ($files as $file => $data) {
-            $submenu .= '   <li><a href="/plugins/' . self::$name . '/' . htmlspecialchars($data['page']) . '"><i class="fa fa-map fa-fw fa-lg" aria-hidden="true"></i> ' . htmlspecialchars($data['title']) . '</a></li>';
+            $submenu .= '   <li><a href="/plugins/' . self::$name . '/output/' . htmlspecialchars($data['page']) . '"><i class="fa fa-map fa-fw fa-lg" aria-hidden="true"></i> ' . htmlspecialchars($data['title']) . '</a></li>';
             $count++;
         }
         $submenu .= ' </ul>';
