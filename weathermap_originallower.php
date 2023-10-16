@@ -19,6 +19,7 @@ $output="html";
 $configfile="weathermap.conf";
 $htmlfile='';
 $imagefile='';
+$outputdirname='';
 $dumpafter=0;
 $dumpstats=0;
 $randomdata=0;
@@ -44,6 +45,7 @@ $long_opts=array
 		"base-href=",
 		"config=",
 		"output=",
+		"outputdirname=",
 		"debug",
 		"uberdebug",
 		"stats",
@@ -147,6 +149,10 @@ if (sizeof($gopts) > 0)
 			$options_output['widthmod'] = TRUE;
 			break;
 
+		case '--outputdirname':
+			$outputdirname=$o[1];
+			break;
+		
 		case '--output':
 			$imagefile=$o[1];
 			break;
@@ -190,6 +196,7 @@ if (sizeof($gopts) > 0)
                         
                         print " --config {filename}      -  filename to read from. Default weathermap.conf\n";
                         print " --output {filename}      -  filename to write image. Default weathermap.png\n";
+						print " --outputdirname {dirname}-  directory name for output. Default empty.\n";
                         print " --htmloutput {filename}  -  filename to write HTML. Default weathermap.html\n\n";
                         
 			            print " --base-href {uri}        - URI for Weathermap, i.e /weathermap/\n";
@@ -253,9 +260,17 @@ if ($map->ReadConfig($configfile))
 		else { $imagefile=$map->imageoutputfile; }
 	}
 
+	if(!empty($outputdirname)){
+		$imagefile = $outputdirname . "/" . $imagefile;
+	}
+
 	if ($htmlfile == '')
 	{
 		if ($map->htmloutputfile != '') { $htmlfile = $map->htmloutputfile; }
+	}
+
+	if(!empty($outputdirname)){
+		$htmlfile = $outputdirname . "/" . $htmlfile;
 	}
 
     // feed in any command-line defaults, so that they appear as if SET lines in the config
