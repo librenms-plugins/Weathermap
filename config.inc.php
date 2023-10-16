@@ -24,6 +24,6 @@ $use_relative_overlay = FALSE; // set to TRUE to enable experimental overlay sho
 $grid_snap_value = 0; // set non-zero to snap to a grid of that spacing
 
 
-$basehref='/plugins/Weathermap/';
+$basehref='/plugins/weathermap/';
 
 
