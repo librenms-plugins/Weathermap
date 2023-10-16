@@ -260,17 +260,9 @@ if ($map->ReadConfig($configfile))
 		else { $imagefile=$map->imageoutputfile; }
 	}
 
-	if(!empty($outputdirname)){
-		$imagefile = $outputdirname . "/" . $imagefile;
-	}
-
 	if ($htmlfile == '')
 	{
 		if ($map->htmloutputfile != '') { $htmlfile = $map->htmloutputfile; }
-	}
-
-	if(!empty($outputdirname)){
-		$htmlfile = $outputdirname . "/" . $htmlfile;
 	}
 
     // feed in any command-line defaults, so that they appear as if SET lines in the config
@@ -308,7 +300,7 @@ if ($map->ReadConfig($configfile))
 	
 	if ($imagefile != '')
 	{
-		$map->DrawMap($imagefile);
+		$map->DrawMap(!empty($outputdirname) ? $outputdirname . "/" . $imagefile : $imagefile);
 		$map->imagefile=$imagefile;
 	}
 
@@ -316,7 +308,7 @@ if ($map->ReadConfig($configfile))
 	{
 		wm_debug("Writing HTML to $htmlfile\n");
 		
-		$fd=fopen($htmlfile, 'w');
+		$fd=fopen(!empty($outputdirname) ? $outputdirname . "/" . $htmlfile : $htmlfile, 'w');
 		fwrite($fd,
 			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head>');
 		fwrite($fd,"<base href=\"$map->basehref\">");
