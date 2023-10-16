@@ -4,9 +4,9 @@ namespace LibreNMS\Plugins;
 
 include_once 'lib/editor.inc.php';
 
-class Weathermap
+class weathermap
 {
-    public static $name = 'Weathermap';
+    public static $name = 'weathermap';
 
     public static function menu()
     {
