@@ -237,6 +237,7 @@ $map->rrdtool = $rrdtool;
 $map->context="cli";
 $map->daemon=$daemon;
 $map->daemon_args=$daemon_args;
+$map->outputdirname = $outputdirname;
 
 if(isset($chdir)) {
 	$map->chdir=$chdir;

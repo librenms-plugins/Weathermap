@@ -209,6 +209,7 @@ class WeatherMap extends WeatherMapBase
 	var $configfile;
 	var $imagefile,
 		$imageuri;
+    var $outputdirname;
 	var $rrdtool;
 	// libreNMS exclusive variables
     var $daemon;
@@ -3812,7 +3813,7 @@ class WeatherMap extends WeatherMapBase
         if ($this->imageuri != '') {
             $html .= sprintf(
                 '<img id="wmapimage" src="%s" width="%d" height="%d" border="0" usemap="#%s"',
-                $this->imageuri,
+                !empty($this->outputdirname) ? $this->outputdirname . "/" . $this->imageuri : $this->imageuri,
                 $this->width,
                 $this->height,
                 $imagemapname
