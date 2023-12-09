@@ -15,6 +15,7 @@
 
 class WeatherMapDataSource_snmp2c extends WeatherMapDataSource
 {
+    var $down_cache;
 
     function Init(&$map)
     {

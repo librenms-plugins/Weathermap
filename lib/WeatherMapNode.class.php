@@ -54,7 +54,8 @@ class WeatherMapNode extends WeatherMapItem
 	var $template;
 	var $polar;
 	var $boundingboxes=array();
-
+    var $aiconoutlinecolour;
+    var $aiconfillcolour;
 	function __construct()
 	{
 		$this->inherit_fieldlist=array
@@ -627,6 +628,11 @@ class WeatherMapNode extends WeatherMapItem
 			$txt_y -= $bbox_y1;
 			$txt_y += ($this->labeloffsety + $dy);
 
+            $label_x1=(int)$label_x1;
+            $label_y1=(int)$label_y1;
+            $label_x2=(int)$label_x2;
+            $label_y2=(int)$label_y2;
+
 			#       print "FINAL TEXT at $txt_x , $txt_y\n";
 
 			// if there's an icon, then you can choose to have no background
@@ -716,7 +722,7 @@ class WeatherMapNode extends WeatherMapItem
 		if(isset($this->image))
 		{
 			imagealphablending($im, true);
-			imagecopy ( $im, $this->image, $this->x - $this->centre_x, $this->y - $this->centre_y, 0, 0, imagesx($this->image), imagesy($this->image) );
+			imagecopy ( $im, $this->image, (int)($this->x - $this->centre_x), (int)($this->y - $this->centre_y), 0, 0, imagesx($this->image), imagesy($this->image) );
 		}
 
 	}

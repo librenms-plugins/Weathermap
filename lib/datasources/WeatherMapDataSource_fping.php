@@ -6,6 +6,7 @@
 // TARGET fping:hostname
 
 class WeatherMapDataSource_fping extends WeatherMapDataSource {
+    var $fping_cmd;
 
 	var $addresscache = array();
 	var $donepings = FALSE;

@@ -274,6 +274,12 @@ class WeatherMap extends WeatherMapBase
     var $coverage = array();
     var $colourtable = array();
     var $warncount = 0;
+    var $numscales = array();
+    var $dumpconfig;
+    var $labelstyle;
+    var $fonts;
+    var $basehref;
+    var $image;
 
 	function WeatherMap(){
 		return __construct();
@@ -503,7 +509,7 @@ class WeatherMap extends WeatherMapBase
         }
 
         if (($fontnumber > 0) && ($fontnumber < 6)) {
-            imagestring($image, $fontnumber, $x, $y - imagefontheight($fontnumber), $string, $colour);
+            imagestring($image, $fontnumber, (int)$x, (int)$y - imagefontheight($fontnumber), $string, $colour);
             if ($angle != 0) {
                 wm_warn("Angled text doesn't work with non-FreeType fonts [WMWARN02]\n");
             }
@@ -1106,7 +1112,7 @@ class WeatherMap extends WeatherMapBase
             )) {
             $bgcol = myimagecolorallocate($im, $bgcolour[0], $bgcolour[1], $bgcolour[2]);
             # imagefilledrectangle($im, $x1, $y1, $x2, $y2, $bgcol);
-            wimagefilledpolygon($im, $points, 4, $bgcol);
+            wimagefilledpolygon($im, array_slice($points,0,8), 4, $bgcol);
         }
 
         if ($outlinecolour != array
@@ -1117,7 +1123,7 @@ class WeatherMap extends WeatherMapBase
             )) {
             $outlinecol = myimagecolorallocate($im, $outlinecolour[0], $outlinecolour[1], $outlinecolour[2]);
             # imagerectangle($im, $x1, $y1, $x2, $y2, $outlinecol);
-            wimagepolygon($im, $points, 4, $outlinecol);
+            wimagepolygon($im, array_slice($points,0,8), 4, $outlinecol);
         }
 
         $textcol = myimagecolorallocate($im, $textcolour[0], $textcolour[1], $textcolour[2]);
