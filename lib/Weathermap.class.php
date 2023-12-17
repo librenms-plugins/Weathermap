@@ -209,6 +209,7 @@ class WeatherMap extends WeatherMapBase
 	var $configfile;
 	var $imagefile,
 		$imageuri;
+    var $outputdirname;
 	var $rrdtool;
 	// libreNMS exclusive variables
     var $daemon;
