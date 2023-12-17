@@ -20,16 +20,17 @@ if(! is_writable('plugins/Weathermap/configs')) {
   echo ('Click <a href="plugins/Weathermap/editor.php">here to access the editor</a> where you can create and manage maps.');
   $directory = 'plugins/Weathermap/output/';
   $images = glob($directory . "*.png");
-  echo('<div class="container">
-    <ul class="list-inline">');
+  echo('<div class="row">
+  <div class="col-md-12">');
   foreach($images as $image) {
     $overlib = pathinfo($image);
     $overlib = $overlib['dirname'] . '/' . substr($overlib['basename'], 0, strrpos($overlib['basename'], '.')) . '.html';
-    echo('<li><a href="' . $overlib . '"><img class="img-responsive" src="' . $image . '"/></a></li>');
+    echo('<div class="panel panel-default panel-condensed">
+           <a href="' . $overlib . '"><img class="img-responsive" src="' . $image . '"/></a></li>
+          </div>');
   }
-  echo('</ul>
+  echo('</div>
     </div>');
 }
 
 ?>
-
