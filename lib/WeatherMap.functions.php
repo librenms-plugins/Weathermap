@@ -1883,7 +1883,7 @@ function wimagefilledrectangle( $image ,$x1, $y1, $x2, $y2, $color )
 	$r = $r/255; $g=$g/255; $b=$b/255; $a=(127-$a)/127;
 
 	metadump("FRECT $x1 $y1 $x2 $y2 $r $g $b $a");
-	return(imagefilledrectangle( $image ,$x1, $y1, $x2, $y2, $color ));
+	return(imagefilledrectangle( $image ,(int)$x1, (int)$y1, (int)$x2, (int)$y2, $color ));
 }
 
 function wimagerectangle( $image ,$x1, $y1, $x2, $y2, $color )
@@ -1915,7 +1915,7 @@ function wimagepolygon($image, $points, $num_points, $color)
 	
 	metadump("POLY $num_points ".$pts." $r $g $b $a");
 
-	return(imagepolygon($image, $points, $num_points, $color));
+	return(imagepolygon($image, $points, $color));
 }
 
 function wimagefilledpolygon($image, $points, $num_points, $color)
@@ -1935,7 +1935,7 @@ function wimagefilledpolygon($image, $points, $num_points, $color)
 	
 	metadump("FPOLY $num_points ".$pts." $r $g $b $a");
 
-	return(imagefilledpolygon($image, $points, $num_points, $color));
+	return(imagefilledpolygon($image, $points, $color));
 }
 
 function wimagecreatetruecolor($width, $height)
